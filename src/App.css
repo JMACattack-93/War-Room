@@ -1,0 +1,8 @@
+#root {
+  background-color: #020617; /* Deep War-Room Navy */
+  min-height: 100vh;
+  margin: 0;
+  display: block;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
