@@ -24,8 +24,8 @@ export const BIG_BOARD = [
       { "l": "Explosive-Twitch", "c": "red" },
       { "l": "Versatile-Alignment", "c": "blue" },
       { "l": "Edge-Setter", "c": "blue" },
-      { "l": "Versatile-Alignment", "c": "blue" },
-      { "l": "High-RAS", "c": "blue" }
+      { "l": "Long-Arms", "c": "red" },
+      { "l": "High-RAS", "c": "red" }
     ]
   },
   {
@@ -58,7 +58,7 @@ export const BIG_BOARD = [
     "id": 5,
     "name": "Rueben Bain Jr.",
     "pos": "EDGE",
-    "school": "Miami (FL)",
+    "school": "Miami FL",
     "grade": 92.8,
     "traits": [
       { "l": "Power-Rusher", "c": "red" },
@@ -83,7 +83,7 @@ export const BIG_BOARD = [
     "id": 7,
     "name": "Francis Mauigoa",
     "pos": "OT",
-    "school": "Miami (FL)",
+    "school": "Miami FL",
     "grade": 82.6,
     "traits": [
       { "l": "Stout-Base", "c": "blue" },
@@ -249,7 +249,7 @@ export const BIG_BOARD = [
     "id": 20,
     "name": "Akheem Mesidor",
     "pos": "EDGE",
-    "school": "Miami (FL)",
+    "school": "Miami FL",
     "grade": 92.5,
     "traits": [
       { "l": "Technician", "c": "blue" },
@@ -677,7 +677,7 @@ export const BIG_BOARD = [
     "id": 55,
     "name": "Keionte Scott",
     "pos": "CB",
-    "school": "Miami (FL)",
+    "school": "Miami FL",
     "grade": 89.6,
     "traits": [
       { "l": "Physical-Tackler", "c": "red" },
