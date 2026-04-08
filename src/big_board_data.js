@@ -18,10 +18,12 @@ export const BIG_BOARD = [
     "name": "Arvell Reese",
     "pos": "LB",
     "school": "Ohio State",
-    "grade": 75.8,
+    "grade": 95.8,
     "traits": [
       { "l": "Elite-Athlete", "c": "gold" },
       { "l": "Explosive-Twitch", "c": "red" },
+      { "l": "Versatile-Alignment", "c": "blue" },
+      { "l": "Edge-Setter", "c": "blue" },
       { "l": "Versatile-Alignment", "c": "blue" },
       { "l": "High-RAS", "c": "blue" }
     ]
