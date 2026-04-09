@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-/* DATA IMPORTS */
-import { BIG_BOARD } from './big_board_data';
+/* DATA IMPORTS - Now using v10 as the core engine */
+import { BIG_BOARD } from './player_datav10'; 
 import { GM_DATA } from './GM_data'; 
 import { DRAFT_ORDER } from './draftorder100';
 import { TEAM_COLORS } from './team_colors'; 
@@ -24,6 +24,16 @@ const s = {
   needGood: '#10b981',
   fallingPurple: '#a855f7',
   qbCyan: '#22d3ee'      
+};
+
+/* -------------------------------------------------------------------------- */
+/* DATA UTILITIES                                                              */
+/* -------------------------------------------------------------------------- */
+
+const formatHt = (ht) => {
+  if (!ht) return "N/A";
+  const str = String(ht);
+  return `${str[0]}'${str.slice(1,3)}"`;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -80,23 +90,39 @@ export default function App() {
   const teamLogo = TEAM_COLORS?.[activeDraftTeam]?.logo || '';
   const activeTeamData = GM_DATA?.[activeDraftTeam] || { n: 'Unknown', needs: {}, likes: [], outlook: 'Calibrating...', window: 'CHASING' };
 
+  /* NEW NEURAL FIT LOGIC: Integrated for v10 Structured Traits */
   const calculateFit = (player, teamKey) => {
     if (!player || !teamKey) return { score: 0, reasons: [] };
     const teamData = GM_DATA?.[teamKey] || { needs: {}, likes: [] };
     const pKey = player.pos === 'IDL' ? 'DT' : player.pos;
     const needScore = teamData?.needs?.[pKey] || 0;
-    const teamLikes = Array.isArray(teamData?.likes) ? teamData.likes : [];
-    const matchedTraits = player.traits.filter(t => teamLikes.some(like => like.toLowerCase() === t.l.toLowerCase()));
-    const score = Math.min(99, Math.round((needScore * 0.4) + (player.grade * 0.3) + (matchedTraits.length * 12)));
+    
+    // Flatten structured traits for matching
+    const allPlayerTraits = [
+      ...(player.traits.chrome || []),
+      ...(player.traits.gold || []),
+      ...(player.traits.emerald || []),
+      ...(player.traits.sapphire || []),
+      ...(player.traits.ruby || [])
+    ];
+
+    const matchedTraits = allPlayerTraits.filter(t => 
+      (teamData.likes || []).some(like => like.toLowerCase() === t.toLowerCase())
+    );
+
+    // Using 85 as a baseline grade since grade isn't explicit in v10 yet
+    const baseGrade = 85; 
+    const score = Math.min(99, Math.round((needScore * 0.4) + (baseGrade * 0.3) + (matchedTraits.length * 12)));
     const reasons = [];
-    if (needScore > 85) reasons.push("CRITICAL REQUIREMENT");
-    if (player.grade > 88) reasons.push("ELITE GRADE");
-    if (matchedTraits.length > 1) reasons.push("SCHEME SYNERGY");
+    if (needScore > 85) reasons.push("CRITICAL ROSTER HOLE");
+    if (player.traits.gold.length > 0) reasons.push("ELITE CEILING DETECTED");
+    if (matchedTraits.length > 0) reasons.push(`${matchedTraits[0].toUpperCase()} SCHEME SYNERGY`);
+    
     return { score, reasons };
   };
 
   const handleDraft = (playerId) => {
-    const player = BIG_BOARD.find(p => p.id === playerId);
+    const player = BIG_BOARD.find((p, index) => (p.id || index) === playerId);
     if (!player) return;
     setJolt(true);
     setTimeout(() => setJolt(false), 200);
@@ -139,14 +165,15 @@ export default function App() {
   useEffect(() => {
     if (isSimulating && currentPick && !isUserOnClock) {
       const timer = setTimeout(() => {
-        const available = BIG_BOARD.filter(p => !Object.values(draftResults).some(dr => dr.id === p.id));
-        if (available[0]) handleDraft(available[0].id);
+        const available = BIG_BOARD.filter(p => !Object.values(draftResults).some(dr => dr.name === p.name));
+        if (available[0]) handleDraft(available[0].id || 0);
       }, 700);
       return () => clearTimeout(timer);
     } else if (isUserOnClock) { setIsSimulating(false); }
   }, [currentPickIndex, isSimulating, isUserOnClock]);
 
-  const selectedPlayer = BIG_BOARD.find(p => p.id === selectedId);
+  // Handle indexing fallback for ID
+  const selectedPlayer = BIG_BOARD.find((p, index) => (p.id || index) === selectedId);
 
   return (
     <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', background: s.surface, color: '#fff', fontFamily: 'Lexend, sans-serif', overflow: 'hidden' }}>
@@ -170,7 +197,7 @@ export default function App() {
         <div style={{ height: '100vh', width: '100vw', padding: '60px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '60px' }}>
             <div>
-              <span style={{ color: s.brightSapphire, fontWeight: '900', letterSpacing: '10px', fontSize: '14px' }}>TACTICAL INTERFACE v3.4</span>
+              <span style={{ color: s.brightSapphire, fontWeight: '900', letterSpacing: '10px', fontSize: '14px' }}>TACTICAL INTERFACE v10.1</span>
               <h1 style={{ fontSize: '110px', fontWeight: '950', fontStyle: 'italic', color: '#fff', letterSpacing: '-6px', margin: 0, lineHeight: 0.8 }}>WAR ROOM</h1>
             </div>
             <div style={{ display: 'flex', gap: '20px' }}>
@@ -222,33 +249,40 @@ export default function App() {
 
           <main style={{ overflowY: 'auto', padding: '40px 30px', background: s.surface }}>
              <header style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1 style={{ fontSize: '70px', fontWeight: '950', fontStyle: 'italic', letterSpacing: '-4px' }}>BOARD</h1>
+                <h1 style={{ fontSize: '70px', fontWeight: '950', fontStyle: 'italic', letterSpacing: '-4px' }}>2026 BOARD</h1>
                 <input placeholder="SEARCH..." style={{ background: s.surfaceLow, border: 'none', padding: '15px 25px', borderRadius: '15px', color: '#fff', width: '300px', fontWeight: '800' }} onChange={(e) => setSearch(e.target.value)} />
              </header>
 
              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {BIG_BOARD.filter(p => !Object.values(draftResults).some(dp => dp.id === p.id) && p.name.toLowerCase().includes(search.toLowerCase())).map((player) => {
+              {BIG_BOARD.filter(p => !Object.values(draftResults).some(dp => dp.name === p.name) && p.name.toLowerCase().includes(search.toLowerCase())).map((player, idx) => {
                 const fit = calculateFit(player, activeDraftTeam);
                 const [firstName, ...lastNameParts] = player.name.split(' ');
                 const lastName = lastNameParts.join(' ');
                 return (
-                  <div key={player.id} onClick={() => setSelectedId(player.id)} style={{ background: s.surfaceLow, borderRadius: '25px', display: 'grid', gridTemplateColumns: '1.4fr 1.1fr 180px', border: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                  <div key={player.name} onClick={() => setSelectedId(player.id || idx)} style={{ background: s.surfaceLow, borderRadius: '25px', display: 'grid', gridTemplateColumns: '1.4fr 1.1fr 180px', border: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ padding: '30px', position: 'relative' }}>
                       <div style={{ fontSize: '50px', fontWeight: '1000', color: s.brightSapphire, fontStyle: 'italic', position: 'absolute', left: '20px', top: '10px', opacity: 0.85 }}>{player.pos}</div>
-                      {/* SHIFTED LOGO TO RIGHT: 120px */}
                       <img src={COLLEGE_LOGOS[player.school]} style={{ position: 'absolute', right: '120px', height: '180px', opacity: 0.15, filter: 'grayscale(100%) invert(1)' }} alt="" />
                       <div style={{ position: 'relative', zIndex: 2, marginTop: '30px' }}>
                         <div style={{ fontSize: '20px', fontWeight: '1000', color: s.softTerminalGreen, textTransform: 'uppercase', letterSpacing: '2px' }}>{player.school}</div>
-                        {/* RESTORED FIRST NAME */}
                         <div style={{ fontSize: '32px', fontWeight: '900', color: '#fff', textTransform: 'uppercase', fontStyle: 'italic', marginBottom: '-10px', marginTop: '10px' }}>{firstName}</div>
                         <h2 style={{ fontSize: '100px', fontWeight: '1000', textTransform: 'uppercase', fontStyle: 'italic', color: '#fff', letterSpacing: '-6px', margin: 0, lineHeight: 0.8 }}>{lastName}</h2>
                       </div>
                     </div>
-                    <div style={{ padding: '30px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', alignItems: 'center' }}>{player.traits.map(t => (<TraitBadge key={t.l} text={t.l} colorCode={t.c} />))}</div>
+                    
+                    {/* NEW TRAIT MAPPING FOR v10 */}
+                    <div style={{ padding: '30px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', alignItems: 'center' }}>
+                        {player.traits.chrome.map(t => <TraitBadge key={t} text={t} colorCode="cyan" />)}
+                        {player.traits.gold.map(t => <TraitBadge key={t} text={t} colorCode="gold" />)}
+                        {player.traits.emerald.map(t => <TraitBadge key={t} text={t} colorCode="green" />)}
+                        {player.traits.ruby.map(t => <TraitBadge key={t} text={t} colorCode="red" />)}
+                        {player.traits.sapphire.map(t => <TraitBadge key={t} text={t} colorCode="blue" />)}
+                    </div>
+
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ flex: 1, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                            <span style={{ fontSize: '10px', color: s.textDim, fontWeight: '1000' }}>TALENT</span>
-                           <span style={{ fontSize: '32px', fontWeight: '1000', color: s.brightSapphire }}>{Math.round(player.grade)}</span>
+                           <span style={{ fontSize: '32px', fontWeight: '1000', color: s.brightSapphire }}>{Math.round(85)}</span>
                         </div>
                         <div style={{ flex: 1.4, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                             <span style={{ fontSize: '10px', color: s.textDim, fontWeight: '1000' }}>NEURAL FIT</span>
@@ -261,8 +295,8 @@ export default function App() {
              </div>
           </main>
 
-          {/* SUPER-AURA DOSSIER MODAL v3.4 */}
-          {selectedId && (
+          {/* CRYSTALLIZED DOSSIER MODAL v10 */}
+          {selectedId !== null && (
             <div style={{ position: 'fixed', inset: 0, background: `radial-gradient(circle at center, ${teamPrimaryColor}60 0%, #05070a 100%)`, backdropFilter: 'blur(60px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }} onClick={() => setSelectedId(null)}>
               <div style={{ 
                   width: '100%', maxWidth: '1200px', background: 'linear-gradient(145deg, #1a1f24 0%, #0d1117 100%)', 
@@ -273,7 +307,7 @@ export default function App() {
                   '--s': teamSecColor, '--s-60': `${teamSecColor}60`, '--s-40': `${teamSecColor}40`
               }} onClick={(e) => e.stopPropagation()}>
                 
-                <div style={{ padding: '40px 60px', borderRight: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
+                <div style={{ padding: '40px 60px', borderRight: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflowY: 'auto', maxHeight: '90vh' }}>
                     <img src={COLLEGE_LOGOS[selectedPlayer.school]} style={{ position: 'absolute', top: '50%', left: '40%', transform: 'translate(-50%, -50%)', height: '600px', opacity: 0.04, filter: 'grayscale(100%) brightness(3)', pointerEvents: 'none' }} alt="" />
                     <div style={{ display: 'flex', alignItems: 'center', gap: '40px', marginBottom: '30px', position: 'relative', zIndex: 2 }}>
                         <div style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '25px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: `0 0 40px ${teamPrimaryColor}40` }}>
@@ -282,36 +316,44 @@ export default function App() {
                         <div>
                             <div style={{ display: 'flex', gap: '15px', marginBottom: '5px' }}>
                               <span style={{ background: s.softTerminalGreen, color: '#000', padding: '4px 12px', borderRadius: '4px', fontSize: '11px', fontWeight: '1000' }}>{selectedPlayer.school.toUpperCase()}</span>
-                              <span style={{ color: teamSecColor, fontSize: '11px', fontWeight: '800', fontFamily: 'JetBrains Mono' }}>ACCESS_ID: BB_0{selectedPlayer.id}</span>
+                              <span style={{ color: teamSecColor, fontSize: '11px', fontWeight: '800', fontFamily: 'JetBrains Mono' }}>ACCESS_ID: BB_{selectedId}</span>
                             </div>
                             <h2 style={{ fontSize: '100px', fontWeight: '1000', fontStyle: 'italic', margin: 0, lineHeight: 0.75, letterSpacing: '-6px', color: '#fff' }}>{selectedPlayer.name.toUpperCase()}</h2>
-                            <div style={{ fontSize: '22px', fontWeight: '900', color: s.brightSapphire, marginTop: '10px' }}>{selectedPlayer.pos} <span style={{ opacity: 0.2 }}>/</span> #64 BIG BOARD</div>
+                            <div style={{ fontSize: '22px', fontWeight: '900', color: s.brightSapphire, marginTop: '10px' }}>{selectedPlayer.pos} <span style={{ opacity: 0.2 }}>/</span> {selectedPlayer.traits.chrome[0]}</div>
                         </div>
+                    </div>
+
+                    {/* NEW CRYSTALLIZED SUMMARY BLOCK */}
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '30px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '30px', position: 'relative', zIndex: 3 }}>
+                        <div style={{ fontSize: '10px', color: s.brightSapphire, fontWeight: '1000', letterSpacing: '4px', marginBottom: '12px' }}>CONSENSUS_SCOUTING_REPORT</div>
+                        <p style={{ fontSize: '18px', lineHeight: 1.6, color: s.textMain, fontWeight: '500', margin: 0 }}>{selectedPlayer.summary}</p>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', position: 'relative', zIndex: 2 }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                            <div>
-                                <div style={{ fontSize: '10px', color: s.textDim, fontWeight: '1000', marginBottom: '10px', letterSpacing: '4px' }}>NFL_COMP_MATRIX</div>
-                                <div style={{ borderLeft: `8px solid ${teamPrimaryColor}`, paddingLeft: '20px', fontSize: '34px', fontWeight: '1000', fontStyle: 'italic', color: '#fff' }}>
-                                    {selectedPlayer.pos === 'WR' ? 'AJ BROWN' : selectedPlayer.pos === 'OT' ? 'TRENT WILLIAMS' : 'NICK BOSA'}
-                                </div>
-                            </div>
                             <div style={{ background: 'rgba(0,0,0,0.4)', padding: '20px', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'inset 0 2px 20px #000' }}>
-                                <div style={{ fontSize: '10px', color: s.softTerminalGreen, fontWeight: '1000', marginBottom: '12px', letterSpacing: '3px' }}>PHYSICAL_READOUT</div>
+                                <div style={{ fontSize: '10px', color: s.softTerminalGreen, fontWeight: '1000', marginBottom: '12px', letterSpacing: '3px' }}>VERIFIED_TESTING_DATA</div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', fontFamily: 'JetBrains Mono' }}>
-                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>HT/WT</div><div style={{ fontSize: '22px', fontWeight: '900' }}>6'4 / 315</div></div>
-                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>ARMS/HND</div><div style={{ fontSize: '22px', fontWeight: '900' }}>34" / 10"</div></div>
+                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>HT/WT</div><div style={{ fontSize: '22px', fontWeight: '900' }}>{formatHt(selectedPlayer.testing.ht)} / {selectedPlayer.testing.wt}</div></div>
+                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>40 / 10SP</div><div style={{ fontSize: '22px', fontWeight: '900' }}>{selectedPlayer.testing.forty || 'N/A'} / {selectedPlayer.testing.ten || 'N/A'}</div></div>
+                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>VERT/BROAD</div><div style={{ fontSize: '22px', fontWeight: '900' }}>{selectedPlayer.testing.vert || 'N/A'} / {selectedPlayer.testing.broad || 'N/A'}</div></div>
+                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>ARMS/BENCH</div><div style={{ fontSize: '22px', fontWeight: '900' }}>{selectedPlayer.testing.arm ? (selectedPlayer.testing.arm / 100).toFixed(1) + '"' : 'N/A'} / {selectedPlayer.testing.bench || 'N/A'}</div></div>
                                 </div>
                             </div>
                         </div>
                         <div>
                             <div style={{ fontSize: '10px', color: s.textDim, fontWeight: '1000', marginBottom: '15px', letterSpacing: '4px' }}>TRAIT_EVALUATION</div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>{selectedPlayer.traits.map(t => <TraitBadge key={t.l} text={t.l} colorCode={t.c} size="xl" />)}</div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                {selectedPlayer.traits.chrome.map(t => <TraitBadge key={t} text={t} colorCode="cyan" size="xl" />)}
+                                {selectedPlayer.traits.gold.map(t => <TraitBadge key={t} text={t} colorCode="gold" size="xl" />)}
+                                {selectedPlayer.traits.emerald.map(t => <TraitBadge key={t} text={t} colorCode="green" size="xl" />)}
+                                {selectedPlayer.traits.ruby.map(t => <TraitBadge key={t} text={t} colorCode="red" size="xl" />)}
+                                {selectedPlayer.traits.sapphire.map(t => <TraitBadge key={t} text={t} colorCode="blue" size="xl" />)}
+                            </div>
                         </div>
                     </div>
                     {isUserOnClock && (
-                        <button onClick={() => handleDraft(selectedPlayer.id)} style={{ width: '100%', marginTop: '40px', background: `linear-gradient(135deg, ${teamPrimaryColor} 0%, ${teamSecColor} 100%)`, padding: '28px', borderRadius: '20px', border: 'none', color: '#000', fontSize: '26px', fontWeight: '1000', fontStyle: 'italic', cursor: 'pointer', letterSpacing: '4px', boxShadow: `0 15px 50px ${teamPrimaryColor}60` }}>CONFIRM DRAFT PICK</button>
+                        <button onClick={() => handleDraft(selectedId)} style={{ width: '100%', marginTop: '40px', background: `linear-gradient(135deg, ${teamPrimaryColor} 0%, ${teamSecColor} 100%)`, padding: '28px', borderRadius: '20px', border: 'none', color: '#000', fontSize: '26px', fontWeight: '1000', fontStyle: 'italic', cursor: 'pointer', letterSpacing: '4px', boxShadow: `0 15px 50px ${teamPrimaryColor}60` }}>CONFIRM DRAFT PICK</button>
                     )}
                 </div>
 
