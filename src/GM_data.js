@@ -1,7 +1,7 @@
 export const GM_DATA = {
   "WAS": {
     "n": "Washington Commanders",
-    "outlook": "Applying Peters' SF-blueprint; hunting high-character defensive fixers.",
+    "outlook": "Peters' SF-blueprint; hunting high-character defensive fixers.",
     "window": "QB WINDOW",
     "needs": {
       "OT": 85,
@@ -15,16 +15,23 @@ export const GM_DATA = {
       "TE": 50,
       "RB": 85
     },
+    "schemes": [
+      "West Coast",
+      "RPO",
+      "Zone Fit",
+      "Nickel"
+    ],
     "likes": [
-      "Team Captain",
-      "Elite Leadership",
-      "Physicality",
-      "Range"
+      "Heads Up!",
+      "Route Artist",
+      "Track Speed",
+      "Alpha",
+      "Zone Navigator"
     ]
   },
   "NYG": {
     "n": "New York Giants",
-    "outlook": "Harbaugh-Schoen pivot to trench bullying and power-run support for Jaxson Dart.",
+    "outlook": "Harbaugh-Schoen pivot to trench bullying and power-run support.",
     "window": "CHASING",
     "needs": {
       "OT": 95,
@@ -38,660 +45,713 @@ export const GM_DATA = {
       "TE": 55,
       "RB": 96
     },
+    "schemes": [
+      "Pro-Style",
+      "RT-Power",
+      "Boundary CB",
+      "Gap Fit"
+    ],
     "likes": [
-      "Trench Dominance",
-      "High-Contact WR",
-      "Man-Coverage Length",
-      "Special Teams"
+      "Nasty",
+      "Gym Day",
+      "Lever Winner",
+      "Press Technique",
+      "Independent Hands"
     ]
   },
-  "DAL": {
-    "n": "Dallas Cowboys",
-    "outlook": "Emergency defensive overhaul via premium draft capital; hunting front-seven speed.",
-    "window": "CHASING",
-    "needs": {
-      "OT": 85,
-      "QB": 15,
-      "WR": 88,
-      "EDGE": 94,
-      "CB": 82,
-      "DT": 70,
-      "LB": 95,
-      "S": 75,
-      "TE": 40,
-      "RB": 90
-    },
-    "likes": [
-      "Verified Speed",
-      "Explosive Power",
-      "Production",
-      "High Motor"
-    ]
-  },
-  "PHI": {
-    "n": "Philadelphia Eagles",
-    "outlook": "Howie Roseman value-hunting; loading up on trait-heavy secondary help for Fangio.",
+  "BAL": {
+    "n": "Baltimore Ravens",
+    "outlook": "Identity drafting; hunting physical processors.",
     "window": "CONTENDER",
     "needs": {
       "OT": 90,
       "QB": 10,
       "WR": 82,
-      "EDGE": 75,
-      "CB": 88,
-      "DT": 70,
-      "LB": 60,
-      "S": 95,
-      "TE": 50,
-      "RB": 35
-    },
-    "likes": [
-      "Top-30 Visit",
-      "Processing IQ",
-      "High Ceiling",
-      "Trench Asset"
-    ]
-  },
-  "ATL": {
-    "n": "Atlanta Falcons",
-    "outlook": "Stefanski-Callahan reset; prioritizing trench technicality and zone-scheme IQ.",
-    "window": "CHASING",
-    "needs": {
-      "OT": 92,
-      "QB": 10,
-      "WR": 70,
-      "EDGE": 80,
-      "CB": 75,
-      "DT": 88,
-      "LB": 55,
-      "S": 60,
-      "TE": 45,
-      "RB": 35
-    },
-    "likes": [
-      "Technical Discipline",
-      "Zone IQ",
-      "Trench Anchor",
-      "Versatility"
-    ]
-  },
-  "NO": {
-    "n": "New Orleans Saints",
-    "outlook": "Kellen Moore offensive reset; hunting vertical weapons and LSU-pedigree secondary help.",
-    "window": "REBUILDING",
-    "needs": {
-      "OT": 80,
-      "QB": 15,
-      "WR": 96,
       "EDGE": 88,
       "CB": 85,
       "DT": 75,
       "LB": 60,
       "S": 55,
-      "TE": 90,
-      "RB": 40
+      "TE": 50,
+      "RB": 70
     },
+    "schemes": [
+      "Pro-Style",
+      "0-1 Tech",
+      "Box Safety",
+      "RT-Power"
+    ],
     "likes": [
-      "Vertical Speed",
-      "Alpha Mentality",
-      "Ball Skills",
-      "YAC"
+      "Nasty",
+      "Alpha",
+      "Heads Up!",
+      "Gym Day",
+      "Track Speed"
     ]
   },
-  "TB": {
-    "n": "Tampa Bay Buccaneers",
-    "outlook": "Urgent defensive patching under Bowles; prone to over-pursuing premium traits to stop the bleed.",
-    "window": "FALLING",
-    "needs": {
-      "OT": 75,
-      "QB": 10,
-      "WR": 85,
-      "EDGE": 92,
-      "CB": 99,
-      "DT": 70,
-      "LB": 75,
-      "S": 55,
-      "TE": 45,
-      "RB": 40
-    },
-    "likes": [
-      "Shutdown Speed",
-      "Route Polishing",
-      "Verified 40",
-      "Alpha Mentality"
-    ]
-  },
-  "CAR": {
-    "n": "Carolina Panthers",
-    "outlook": "Dan Morgan 'Dog' hunting; prioritizing trench flexibility and high-motor grinders.",
-    "window": "QB WINDOW",
-    "needs": {
-      "OT": 95,
-      "QB": 10,
-      "WR": 88,
-      "EDGE": 82,
-      "CB": 80,
-      "DT": 75,
-      "LB": 92,
-      "S": 60,
-      "TE": 85,
-      "RB": 55
-    },
-    "likes": [
-      "High Motor",
-      "Relentless Grit",
-      "Positional Flexibility",
-      "Grit"
-    ]
-  },
-  "SEA": {
-    "n": "Seattle Seahawks",
-    "outlook": "Mike Macdonald's positionless defensive reset; hunting high-IQ versatile chess pieces.",
+  "DAL": {
+    "n": "Dallas Cowboys",
+    "outlook": "Star-hunting; vertical weapons and elite secondary length.",
     "window": "CONTENDER",
     "needs": {
-      "OT": 75,
-      "QB": 10,
-      "WR": 65,
-      "EDGE": 82,
-      "CB": 88,
-      "DT": 70,
-      "LB": 60,
-      "S": 95,
-      "TE": 45,
-      "RB": 30
-    },
-    "likes": [
-      "Versatile Coverage",
-      "Collision Communicator",
-      "Culture Fit",
-      "High IQ"
-    ]
-  },
-  "ARI": {
-    "n": "Arizona Cardinals",
-    "outlook": "Ossenfort trench overhaul; prioritizing elite athletic length and massive frames.",
-    "window": "FIRESALE",
-    "needs": {
-      "OT": 95,
-      "QB": 85,
-      "WR": 88,
-      "EDGE": 92,
-      "CB": 85,
-      "DT": 75,
-      "LB": 50,
-      "S": 45,
-      "TE": 40,
-      "RB": 25
-    },
-    "likes": [
-      "Athletic Length",
-      "Hand Strength",
-      "Developmental Ceiling",
-      "Trench Power"
-    ]
-  },
-  "LAR": {
-    "n": "LA Rams",
-    "outlook": "Snead-McVay reloading at premium slots; hunting man-coverage speed and route technicians.",
-    "window": "CONTENDER",
-    "needs": {
-      "OT": 85,
+      "OT": 70,
       "QB": 15,
-      "WR": 80,
-      "EDGE": 75,
-      "CB": 92,
-      "DT": 65,
-      "LB": 55,
-      "S": 50,
-      "TE": 45,
-      "RB": 40
+      "WR": 85,
+      "EDGE": 80,
+      "CB": 90,
+      "DT": 85,
+      "LB": 75,
+      "S": 60,
+      "TE": 40,
+      "RB": 95
     },
+    "schemes": [
+      "West Coast",
+      "Vertical Z",
+      "Nickel",
+      "Wide-9 Specialist"
+    ],
     "likes": [
-      "Man-Coverage Speed",
-      "Route Polishing",
-      "IQ",
-      "Verified 40"
+      "Rabbit Agility",
+      "Route Artist",
+      "Leaper",
+      "Vision",
+      "Alpha"
     ]
   },
-  "SF": {
-    "n": "San Francisco 49ers",
-    "outlook": "Shanahan foundation reset; scouting the successor for Trent Williams and zone-scheme fits.",
+  "PHI": {
+    "n": "Philadelphia Eagles",
+    "outlook": "Roseman's mobility-first strategy; tracking explosive athletes.",
     "window": "CONTENDER",
     "needs": {
-      "OT": 96,
+      "OT": 60,
       "QB": 10,
-      "WR": 70,
-      "EDGE": 82,
-      "CB": 88,
-      "DT": 75,
-      "LB": 55,
-      "S": 50,
-      "TE": 45,
-      "RB": 40
-    },
-    "likes": [
-      "Scheme Fit",
-      "Zone-Blocking IQ",
-      "Length",
-      "Agility"
-    ]
-  },
-  "CHI": {
-    "n": "Chicago Bears",
-    "outlook": "Ben Johnson's technical overhaul; building a trench-bully defense for Dennis Allen.",
-    "window": "QB WINDOW",
-    "needs": {
-      "OT": 92,
-      "QB": 10,
-      "WR": 88,
+      "WR": 75,
       "EDGE": 85,
-      "CB": 75,
-      "DT": 95,
-      "LB": 60,
+      "CB": 92,
+      "DT": 70,
+      "LB": 88,
       "S": 80,
       "TE": 45,
-      "RB": 10
+      "RB": 50
     },
+    "schemes": [
+      "RPO",
+      "Zone Fit",
+      "Versatile CB",
+      "Weak 5/7"
+    ],
     "likes": [
-      "Trench Anchor",
-      "Dirty-Work WR",
-      "Explosive Power",
-      "Technicality"
+      "Track Speed",
+      "Vision",
+      "Blitz Shield",
+      "Heads Up!",
+      "Rabbit Agility"
     ]
   },
   "DET": {
     "n": "Detroit Lions",
-    "outlook": "Holmes-Campbell 'Grit' maintenance; reloading foundational trench and safety depth.",
+    "outlook": "Dan Campbell's 'Grit' build; hunting trench bullies and alphas.",
     "window": "CONTENDER",
     "needs": {
-      "OT": 95,
-      "QB": 20,
-      "WR": 60,
-      "EDGE": 88,
-      "CB": 80,
-      "DT": 75,
-      "LB": 55,
-      "S": 92,
+      "OT": 50,
+      "QB": 10,
+      "WR": 82,
+      "EDGE": 85,
+      "CB": 88,
+      "DT": 80,
+      "LB": 70,
+      "S": 65,
       "TE": 40,
-      "RB": 35
+      "RB": 45
     },
+    "schemes": [
+      "Pro-Style",
+      "RT-Power",
+      "Nickel",
+      "0-1 Tech"
+    ],
     "likes": [
-      "Grit",
-      "Verified 40",
-      "Trench Dominance",
-      "High Motor"
+      "Nasty",
+      "Alpha",
+      "Independent Hands",
+      "Textbook Tackler",
+      "Gym Day"
+    ]
+  },
+  "CHI": {
+    "n": "Chicago Bears",
+    "outlook": "Surrounding Caleb with processing-heavy receivers and high-IQ DBs.",
+    "window": "CHASING",
+    "needs": {
+      "OT": 85,
+      "QB": 10,
+      "WR": 80,
+      "EDGE": 92,
+      "CB": 75,
+      "DT": 85,
+      "LB": 60,
+      "S": 55,
+      "TE": 45,
+      "RB": 70
+    },
+    "schemes": [
+      "West Coast",
+      "Zone Fit",
+      "Versatile CB",
+      "Strong 5"
+    ],
+    "likes": [
+      "Zone Navigator",
+      "Route Artist",
+      "Heads Up!",
+      "Rabbit Agility",
+      "Alpha"
     ]
   },
   "GB": {
     "n": "Green Bay Packers",
-    "outlook": "Gutekunst 'Unicorn' hunting; prioritizing elite RAS scores and boundary erasers.",
-    "window": "CONTENDER",
+    "outlook": "Youth-driven athletic upside; hunting 'Frame to Grow' project players.",
+    "window": "CHASING",
     "needs": {
-      "OT": 88,
+      "OT": 82,
       "QB": 10,
       "WR": 65,
-      "EDGE": 92,
-      "CB": 94,
-      "DT": 55,
-      "LB": 75,
+      "EDGE": 80,
+      "CB": 85,
+      "DT": 75,
+      "LB": 88,
       "S": 82,
-      "TE": 50,
-      "RB": 45
+      "TE": 40,
+      "RB": 70
     },
+    "schemes": [
+      "West Coast",
+      "Zone Fit",
+      "Nickel",
+      "Weak 5/7"
+    ],
     "likes": [
-      "RAS Score",
-      "Athleticism",
-      "Unicorn Athlete",
-      "Boundary Eraser"
+      "Rabbit Agility",
+      "Zone Navigator",
+      "Heads Up!",
+      "Frame to Grow",
+      "Smooth Mechanics"
     ]
   },
   "MIN": {
     "n": "Minnesota Vikings",
-    "outlook": "Value-based BPA approach; hunting high-IQ mobile weapons and defensive stabilizers.",
+    "outlook": "KOC's precision timing offense; hunting route craftsmanship.",
     "window": "CHASING",
     "needs": {
-      "OT": 75,
-      "QB": 95,
-      "WR": 60,
-      "EDGE": 80,
-      "CB": 90,
+      "OT": 60,
+      "QB": 15,
+      "WR": 75,
+      "EDGE": 88,
+      "CB": 92,
       "DT": 85,
-      "LB": 65,
+      "LB": 80,
       "S": 55,
       "TE": 45,
-      "RB": 40
+      "RB": 82
     },
+    "schemes": [
+      "West Coast",
+      "Vertical Z",
+      "Nickel",
+      "3-Tech"
+    ],
     "likes": [
-      "Mobile QB",
-      "Art of Progression",
-      "Elite Ceiling",
-      "Value-BPA"
+      "Route Artist",
+      "Zone Navigator",
+      "Script Reader",
+      "Heads Up!",
+      "Rabbit Agility"
     ]
   },
-  "BAL": {
-    "n": "Baltimore Ravens",
-    "outlook": "DeCosta edge-violence reset; hunting physical 'Raven Archetype' finishers and IOL stability.",
+  "SF": {
+    "n": "San Francisco 49ers",
+    "outlook": "Lynch-Shanahan 'Positionless' strategy; hunting yards-after-catch and zone erasers.",
     "window": "CONTENDER",
     "needs": {
-      "OT": 75,
+      "OT": 92,
       "QB": 10,
-      "WR": 70,
-      "EDGE": 99,
-      "CB": 82,
-      "DT": 85,
-      "LB": 55,
-      "S": 60,
-      "TE": 40,
-      "RB": 35
-    },
-    "likes": [
-      "Violent Finisher",
-      "Raven Archetype",
-      "Versatility",
-      "IQ"
-    ]
-  },
-  "CIN": {
-    "n": "Cincinnati Bengals",
-    "outlook": "Tobin 'Deep Board' reloading; prioritizing defensive interior bulk and high-IQ linebackers.",
-    "window": "CHASING",
-    "needs": {
-      "OT": 80,
-      "QB": 10,
-      "WR": 65,
-      "EDGE": 88,
-      "CB": 75,
-      "DT": 92,
-      "LB": 95,
-      "S": 85,
-      "TE": 45,
-      "RB": 40
-    },
-    "likes": [
-      "Football IQ",
-      "Consistency",
-      "Defensive Bulk",
-      "Intact Stability"
-    ]
-  },
-  "CLE": {
-    "n": "Cleveland Browns",
-    "outlook": "Berry-Monken explosive reset; using massive capital to secure Sanders' blindside and vertical threats.",
-    "window": "FALLING",
-    "needs": {
-      "OT": 99,
-      "QB": 10,
-      "WR": 94,
-      "EDGE": 65,
-      "CB": 75,
-      "DT": 80,
-      "LB": 70,
-      "S": 60,
-      "TE": 45,
-      "RB": 35
-    },
-    "likes": [
-      "Pass-Blocking Purity",
-      "Explosive Playmaker",
-      "Sustainability",
-      "Value"
-    ]
-  },
-  "PIT": {
-    "n": "Pittsburgh Steelers",
-    "outlook": "Omar Khan smokescreen strategy; focusing on BPA toughness while hoarding ammo for '27 QB run.",
-    "window": "CHASING",
-    "needs": {
-      "OT": 85,
-      "QB": 45,
-      "WR": 90,
-      "EDGE": 75,
+      "WR": 75,
+      "EDGE": 85,
       "CB": 88,
       "DT": 80,
       "LB": 65,
-      "S": 92,
+      "S": 82,
       "TE": 50,
-      "RB": 40
+      "RB": 45
     },
+    "schemes": [
+      "Zone Fit",
+      "LT-Island",
+      "Wide-9 Specialist",
+      "Nickel"
+    ],
     "likes": [
-      "Smokescreen Utility",
-      "Toughness",
-      "Production",
-      "Top-30 Visit"
+      "Zone Navigator",
+      "Vision",
+      "Rabbit Agility",
+      "Heads Up!",
+      "Blitz Shield"
     ]
   },
-  "HOU": {
-    "n": "Houston Texans",
-    "outlook": "Caserio trench-protection strategy; adding blue-chip anchors to protect C.J. Stroud.",
-    "window": "QB WINDOW",
+  "LAR": {
+    "n": "LA Rams",
+    "outlook": "McVay's timing-based attack; hunting sudden separators and high-IQ IDs.",
+    "window": "CONTENDER",
+    "needs": {
+      "OT": 85,
+      "QB": 90,
+      "WR": 60,
+      "EDGE": 82,
+      "CB": 88,
+      "DT": 85,
+      "LB": 75,
+      "S": 70,
+      "TE": 45,
+      "RB": 50
+    },
+    "schemes": [
+      "Zone Fit",
+      "Slot Tech",
+      "3-Tech",
+      "Nickel"
+    ],
+    "likes": [
+      "Route Artist",
+      "Rabbit Agility",
+      "Smooth Mechanics",
+      "Script Reader",
+      "Heads Up!"
+    ]
+  },
+  "SEA": {
+    "n": "Seattle Seahawks",
+    "outlook": "Macdonald's 'Disguise' blueprint; hunting versatile, long secondaries.",
+    "window": "CHASING",
+    "needs": {
+      "OT": 88,
+      "QB": 85,
+      "WR": 60,
+      "EDGE": 80,
+      "CB": 85,
+      "DT": 82,
+      "LB": 88,
+      "S": 75,
+      "TE": 50,
+      "RB": 55
+    },
+    "schemes": [
+      "RPO",
+      "Versatile CB",
+      "Nickel",
+      "Zone Fit"
+    ],
+    "likes": [
+      "Press Technique",
+      "Track Speed",
+      "Nasty",
+      "Heads Up!",
+      "Rabbit Agility"
+    ]
+  },
+  "ARI": {
+    "n": "Arizona Cardinals",
+    "outlook": "Rebuilding around Kyler; hunting field-tilters and nickel erasers.",
+    "window": "CHASING",
+    "needs": {
+      "OT": 90,
+      "QB": 10,
+      "WR": 85,
+      "EDGE": 92,
+      "CB": 88,
+      "DT": 85,
+      "LB": 75,
+      "S": 60,
+      "TE": 50,
+      "RB": 70
+    },
+    "schemes": [
+      "RPO",
+      "Vertical Z",
+      "Nickel",
+      "3-Tech"
+    ],
+    "likes": [
+      "Track Speed",
+      "Rabbit Agility",
+      "Vision",
+      "Heads Up!",
+      "Zone Navigator"
+    ]
+  },
+  "KC": {
+    "n": "Kansas City Chiefs",
+    "outlook": "Reid's spacing blueprint; hunting sudden movers and high-processing erasers.",
+    "window": "CONTENDER",
     "needs": {
       "OT": 88,
       "QB": 10,
-      "WR": 65,
-      "EDGE": 75,
-      "CB": 82,
-      "DT": 85,
-      "LB": 55,
-      "S": 50,
-      "TE": 45,
-      "RB": 30
-    },
-    "likes": [
-      "Blue Chip",
-      "Trench Dominance",
-      "Technical Floor",
-      "Production"
-    ]
-  },
-  "IND": {
-    "n": "Indianapolis Colts",
-    "outlook": "Ballard 'RAS' hunting; prioritizing elite athletic measurables and perimeter secondary speed.",
-    "window": "CHASING",
-    "needs": {
-      "OT": 75,
-      "QB": 10,
-      "WR": 72,
-      "EDGE": 80,
-      "CB": 92,
-      "DT": 70,
-      "LB": 65,
-      "S": 95,
-      "TE": 45,
-      "RB": 40
-    },
-    "likes": [
-      "Elite RAS Score",
-      "Verified Speed",
-      "Physicality",
-      "Sub-4.4 speed"
-    ]
-  },
-  "JAX": {
-    "n": "Jacksonville Jaguars",
-    "outlook": "Gladstone value-hunting; focusing on tone-setting linebackers and interior defensive depth.",
-    "window": "CHASING",
-    "needs": {
-      "OT": 85,
-      "QB": 10,
-      "WR": 80,
-      "EDGE": 75,
-      "CB": 88,
-      "DT": 92,
-      "LB": 94,
-      "S": 60,
-      "TE": 55,
-      "RB": 35
-    },
-    "likes": [
-      "Tone-Setter",
-      "Game-Changer",
-      "Linebacker Speed",
-      "Bruising Identity"
-    ]
-  },
-  "TEN": {
-    "n": "Tennessee Titans",
-    "outlook": "Saleh-Daboll physical reset; hunting high-motor power-backs and trench bullies.",
-    "window": "REBUILDING",
-    "needs": {
-      "OT": 92,
-      "QB": 10,
       "WR": 85,
-      "EDGE": 96,
-      "CB": 80,
-      "DT": 75,
-      "LB": 65,
-      "S": 60,
-      "TE": 50,
-      "RB": 98
-    },
-    "likes": [
-      "Hair-on-Fire",
-      "Between-Tackles Power",
-      "Speed-to-Weight",
-      "Trench Bully"
-    ]
-  },
-  "NE": {
-    "n": "New England Patriots",
-    "outlook": "Vrabel-Wolf 'Hardened' philosophy; sustaining AFC title roster with power-edge and RT depth.",
-    "window": "QB WINDOW",
-    "needs": {
-      "OT": 80,
-      "QB": 15,
-      "WR": 88,
-      "EDGE": 75,
-      "CB": 85,
-      "DT": 60,
-      "LB": 55,
-      "S": 45,
-      "TE": 35,
-      "RB": 50
-    },
-    "likes": [
-      "Power-Run Archetype",
-      "Edge Violence",
-      "Hand Strength",
-      "Leadership IQ"
-    ]
-  },
-  "MIA": {
-    "n": "Miami Dolphins",
-    "outlook": "Hafley-Sullivan foundational reset; 11-pick haul focusing on technical discipline and scheme fit.",
-    "window": "REBUILDING",
-    "needs": {
-      "OT": 92,
-      "QB": 45,
-      "WR": 98,
-      "EDGE": 80,
+      "EDGE": 82,
       "CB": 88,
       "DT": 75,
       "LB": 70,
-      "S": 85,
-      "TE": 95,
-      "RB": 40
+      "S": 60,
+      "TE": 80,
+      "RB": 65
     },
+    "schemes": [
+      "West Coast",
+      "RPO",
+      "Versatile CB",
+      "3-Tech"
+    ],
     "likes": [
-      "Methodical Rhythm",
-      "Scheme Consistency",
-      "Technical Tackling",
-      "Versatile"
-    ]
-  },
-  "NYJ": {
-    "n": "New York Jets",
-    "outlook": "Aaron Glenn 'Corners-First' defense; rebuilding around blue-chip defensive cornerstones.",
-    "window": "REBUILDING",
-    "needs": {
-      "OT": 80,
-      "QB": 35,
-      "WR": 92,
-      "EDGE": 95,
-      "CB": 85,
-      "DT": 70,
-      "LB": 60,
-      "S": 55,
-      "TE": 45,
-      "RB": 30
-    },
-    "likes": [
-      "Cornerstone Potential",
-      "Boundary Length",
-      "Ballhawk",
-      "Blue Chip"
+      "Script Reader",
+      "Route Artist",
+      "Rabbit Agility",
+      "Track Speed",
+      "Heads Up!"
     ]
   },
   "BUF": {
     "n": "Buffalo Bills",
-    "outlook": "Beane-McDermott weapon procurement; hunting shifty YAC creators and 'Football Guys'.",
+    "outlook": "Allen-centric powerhouse; hunting physical WRs and high-motor DL.",
+    "window": "CONTENDER",
+    "needs": {
+      "OT": 75,
+      "QB": 10,
+      "WR": 88,
+      "EDGE": 85,
+      "CB": 82,
+      "DT": 88,
+      "LB": 70,
+      "S": 82,
+      "TE": 45,
+      "RB": 60
+    },
+    "schemes": [
+      "Pro-Style",
+      "Nickel",
+      "3-Tech",
+      "Vertical Z"
+    ],
+    "likes": [
+      "Heads Up!",
+      "Track Speed",
+      "Nasty",
+      "Alpha",
+      "Zone Navigator"
+    ]
+  },
+  "MIA": {
+    "n": "Miami Dolphins",
+    "outlook": "McDaniel's track-meet build; hunting elite long speed and suddenness.",
+    "window": "CONTENDER",
+    "needs": {
+      "OT": 92,
+      "QB": 15,
+      "WR": 75,
+      "EDGE": 82,
+      "CB": 85,
+      "DT": 88,
+      "LB": 80,
+      "S": 75,
+      "TE": 60,
+      "RB": 50
+    },
+    "schemes": [
+      "RPO",
+      "Vertical Z",
+      "Nickel",
+      "Wide-9 Specialist"
+    ],
+    "likes": [
+      "Track Speed",
+      "Rabbit Agility",
+      "Vision",
+      "Route Artist",
+      "Leaper"
+    ]
+  },
+  "NYJ": {
+    "n": "New York Jets",
+    "outlook": "Win-now window; hunting veteran-ready trench erasers and press corners.",
     "window": "CONTENDER",
     "needs": {
       "OT": 85,
-      "QB": 10,
-      "WR": 94,
-      "EDGE": 75,
-      "CB": 70,
-      "DT": 65,
-      "LB": 50,
-      "S": 45,
-      "TE": 40,
-      "RB": 35
-    },
-    "likes": [
-      "Shiftiness",
-      "YAC Ability",
-      "High Compete",
-      "Ohio State Pedigree"
-    ]
-  },
-  "LV": {
-    "n": "Las Vegas Raiders",
-    "outlook": "Klint Kubiak offensive reset; securing a Heisman-caliber signal caller at #1 overall.",
-    "window": "REBUILDING",
-    "needs": {
-      "OT": 85,
-      "QB": 99,
-      "WR": 90,
-      "EDGE": 65,
-      "CB": 82,
-      "DT": 75,
-      "LB": 60,
-      "S": 55,
-      "TE": 40,
+      "QB": 95,
+      "WR": 70,
+      "EDGE": 88,
+      "CB": 60,
+      "DT": 82,
+      "LB": 75,
+      "S": 70,
+      "TE": 50,
       "RB": 45
     },
+    "schemes": [
+      "Pro-Style",
+      "Wide-9 Specialist",
+      "Nickel",
+      "Boundary CB"
+    ],
     "likes": [
-      "Heisman Pedigree",
-      "BPM",
-      "Play-Action",
-      "Athleticism Score"
+      "Nasty",
+      "Press Technique",
+      "Heads Up!",
+      "Alpha",
+      "Track Speed"
     ]
   },
-  "LAC": {
-    "n": "LA Chargers",
-    "outlook": "Hortiz-Harbaugh 'Baltimore West' identity; hunting elite arm length and trench bullies.",
+  "NE": {
+    "n": "New England Patriots",
+    "outlook": "Mayo's defensive reset; hunting high-floor technicians and trench anchors.",
+    "window": "REBUILDING",
+    "needs": {
+      "OT": 95,
+      "QB": 10,
+      "WR": 92,
+      "EDGE": 80,
+      "CB": 85,
+      "DT": 88,
+      "LB": 75,
+      "S": 70,
+      "TE": 60,
+      "RB": 65
+    },
+    "schemes": [
+      "Pro-Style",
+      "Gap Fit",
+      "Strong 5",
+      "Nickel"
+    ],
+    "likes": [
+      "Heads Up!",
+      "Alpha",
+      "Independent Hands",
+      "Textbook Tackler",
+      "Blitz Shield"
+    ]
+  },
+  "PIT": {
+    "n": "Pittsburgh Steelers",
+    "outlook": "Tomlin's physical blueprint; hunting nastiness in the trenches and alpha leaders.",
+    "window": "CHASING",
+    "needs": {
+      "OT": 85,
+      "QB": 88,
+      "WR": 90,
+      "EDGE": 40,
+      "CB": 82,
+      "DT": 85,
+      "LB": 70,
+      "S": 65,
+      "TE": 45,
+      "RB": 50
+    },
+    "schemes": [
+      "Pro-Style",
+      "RT-Power",
+      "3-Tech",
+      "Nickel"
+    ],
+    "likes": [
+      "Nasty",
+      "Gym Day",
+      "Alpha",
+      "Lever Winner",
+      "Heads Up!"
+    ]
+  },
+  "CLE": {
+    "n": "Cleveland Browns",
+    "outlook": "Berry's analytical build; hunting physical markers and elite testing athletes.",
+    "window": "CHASING",
+    "needs": {
+      "OT": 88,
+      "QB": 92,
+      "WR": 75,
+      "EDGE": 70,
+      "CB": 80,
+      "DT": 85,
+      "LB": 82,
+      "S": 65,
+      "TE": 50,
+      "RB": 75
+    },
+    "schemes": [
+      "West Coast",
+      "Wide-9 Specialist",
+      "Nickel",
+      "Gap Fit"
+    ],
+    "likes": [
+      "Gym Day",
+      "Nasty",
+      "Lever Winner",
+      "Press Technique",
+      "Track Speed"
+    ]
+  },
+  "CIN": {
+    "n": "Cincinnati Bengals",
+    "outlook": "Burrow-centric window; hunting explosive separators and high-IQ protectors.",
+    "window": "CONTENDER",
+    "needs": {
+      "OT": 92,
+      "QB": 10,
+      "WR": 88,
+      "EDGE": 80,
+      "CB": 85,
+      "DT": 85,
+      "LB": 75,
+      "S": 70,
+      "TE": 60,
+      "RB": 75
+    },
+    "schemes": [
+      "West Coast",
+      "Vertical Z",
+      "Nickel",
+      "3-Tech"
+    ],
+    "likes": [
+      "Route Artist",
+      "Track Speed",
+      "Heads Up!",
+      "Rabbit Agility",
+      "Alpha"
+    ]
+  },
+  "HOU": {
+    "n": "Houston Texans",
+    "outlook": "Ryans' defensive swarm; hunting sudden linebackers and versatile secondary pieces.",
+    "window": "CONTENDER",
+    "needs": {
+      "OT": 60,
+      "QB": 10,
+      "WR": 75,
+      "EDGE": 88,
+      "CB": 85,
+      "DT": 82,
+      "LB": 92,
+      "S": 75,
+      "TE": 50,
+      "RB": 65
+    },
+    "schemes": [
+      "Zone Fit",
+      "Wide-9 Specialist",
+      "Nickel",
+      "Slot Tech"
+    ],
+    "likes": [
+      "Rabbit Agility",
+      "Heads Up!",
+      "Route Artist",
+      "Nasty",
+      "Track Speed"
+    ]
+  },
+  "IND": {
+    "n": "Indianapolis Colts",
+    "outlook": "Ballard's testing-first strategy; hunting elite arm length and track speed.",
+    "window": "CHASING",
+    "needs": {
+      "OT": 85,
+      "QB": 10,
+      "WR": 82,
+      "EDGE": 88,
+      "CB": 92,
+      "DT": 80,
+      "LB": 70,
+      "S": 85,
+      "TE": 60,
+      "RB": 50
+    },
+    "schemes": [
+      "RPO",
+      "LT-Island",
+      "3-Tech",
+      "Nickel"
+    ],
+    "likes": [
+      "Track Speed",
+      "Gym Day",
+      "Rabbit Agility",
+      "Heads Up!",
+      "Alpha"
+    ]
+  },
+  "JAX": {
+    "n": "Jacksonville Jaguars",
+    "outlook": "Protecting Trevor; hunting polished route runners and high-motor DL.",
     "window": "CHASING",
     "needs": {
       "OT": 92,
       "QB": 10,
-      "WR": 80,
-      "EDGE": 88,
-      "CB": 85,
-      "DT": 82,
-      "LB": 60,
-      "S": 55,
-      "TE": 50,
-      "RB": 65
+      "WR": 85,
+      "EDGE": 82,
+      "CB": 88,
+      "DT": 85,
+      "LB": 75,
+      "S": 70,
+      "TE": 45,
+      "RB": 60
     },
+    "schemes": [
+      "West Coast",
+      "Strong 5",
+      "Nickel",
+      "Versatile"
+    ],
     "likes": [
-      "Raven Strategy",
-      "Arm Length",
-      "Trench Bully",
-      "Special Teams Floor"
+      "Nasty",
+      "Route Artist",
+      "Track Speed",
+      "Heads Up!",
+      "Rabbit Agility"
+    ]
+  },
+  "TEN": {
+    "n": "Tennessee Titans",
+    "outlook": "Carthon's trench rebuild; hunting physical bullies and high-processing DBs.",
+    "window": "REBUILDING",
+    "needs": {
+      "OT": 95,
+      "QB": 10,
+      "WR": 88,
+      "EDGE": 85,
+      "CB": 82,
+      "DT": 88,
+      "LB": 80,
+      "S": 75,
+      "TE": 60,
+      "RB": 70
+    },
+    "schemes": [
+      "West Coast",
+      "Nickel",
+      "3-Tech",
+      "RT-Power"
+    ],
+    "likes": [
+      "Nasty",
+      "Gym Day",
+      "Heads Up!",
+      "Rabbit Agility",
+      "Alpha"
     ]
   },
   "DEN": {
     "n": "Denver Broncos",
-    "outlook": "Payton 'Future-Proofing' strategy; hunting massive tackle archetypes and technical IQ.",
+    "outlook": "Payton's IQ build; hunting technical blockers and processor-heavy erasers.",
     "window": "CONTENDER",
     "needs": {
       "OT": 94,
@@ -705,34 +765,198 @@ export const GM_DATA = {
       "TE": 45,
       "RB": 50
     },
+    "schemes": [
+      "Pro-Style",
+      "LT-Island",
+      "Strong 5",
+      "Nickel"
+    ],
     "likes": [
-      "Future-Proofing",
-      "Giant Archetype",
-      "Technical IQ",
-      "Tape-First"
+      "Independent Hands",
+      "Heads Up!",
+      "Alpha",
+      "Lever Winner",
+      "Route Artist"
     ]
   },
-  "KC": {
-    "n": "Kansas City Chiefs",
-    "outlook": "Veach-Reid 3-peat maintenance; using dual 1st-rounders for vertical weapons and interior bulk.",
-    "window": "CONTENDER",
+  "LV": {
+    "n": "Las Vegas Raiders",
+    "outlook": "Telesco's 'Star' blueprint; hunting elite weapons and nasty trench finishers.",
+    "window": "CHASING",
     "needs": {
       "OT": 88,
-      "QB": 10,
-      "WR": 95,
-      "EDGE": 75,
+      "QB": 99,
+      "WR": 75,
+      "EDGE": 60,
       "CB": 85,
-      "DT": 75,
-      "LB": 40,
-      "S": 50,
-      "TE": 20,
-      "RB": 45
+      "DT": 82,
+      "LB": 80,
+      "S": 70,
+      "TE": 45,
+      "RB": 88
     },
+    "schemes": [
+      "Pro-Style",
+      "Wide-9 Specialist",
+      "Nickel",
+      "Gap Fit"
+    ],
     "likes": [
-      "Vertical Speed",
-      "YAC Playmaker",
-      "Outside Corner- Sticky",
-      "Playmaker"
+      "Nasty",
+      "Alpha",
+      "Gym Day",
+      "Press Technique",
+      "Track Speed"
+    ]
+  },
+  "LAC": {
+    "n": "LA Chargers",
+    "outlook": "Hortiz-Harbaugh identity; hunting elite arm length and trench bullies.",
+    "window": "CHASING",
+    "needs": {
+      "OT": 92,
+      "QB": 10,
+      "WR": 80,
+      "EDGE": 88,
+      "CB": 85,
+      "DT": 82,
+      "LB": 60,
+      "S": 55,
+      "TE": 50,
+      "RB": 65
+    },
+    "schemes": [
+      "Pro-Style",
+      "RT-Power",
+      "Strong 5",
+      "Box Safety"
+    ],
+    "likes": [
+      "Gym Day",
+      "Nasty",
+      "Alpha",
+      "Lever Winner",
+      "Track Speed"
+    ]
+  },
+  "ATL": {
+    "n": "Atlanta Falcons",
+    "outlook": "Fontenot's BPA blueprint; hunting explosive vertical weapons and swarm DL.",
+    "window": "CONTENDER",
+    "needs": {
+      "OT": 75,
+      "QB": 10,
+      "WR": 82,
+      "EDGE": 88,
+      "CB": 85,
+      "DT": 82,
+      "LB": 75,
+      "S": 70,
+      "TE": 40,
+      "RB": 50
+    },
+    "schemes": [
+      "Zone Fit",
+      "Nickel",
+      "3-Tech",
+      "Vertical Z"
+    ],
+    "likes": [
+      "Track Speed",
+      "Rabbit Agility",
+      "Heads Up!",
+      "Nasty",
+      "Alpha"
+    ]
+  },
+  "NO": {
+    "n": "New Orleans Saints",
+    "outlook": "Cap-conscious veterans plus athletic projects; hunting route craftsmen.",
+    "window": "CHASING",
+    "needs": {
+      "OT": 92,
+      "QB": 15,
+      "WR": 85,
+      "EDGE": 82,
+      "CB": 80,
+      "DT": 88,
+      "LB": 85,
+      "S": 70,
+      "TE": 65,
+      "RB": 75
+    },
+    "schemes": [
+      "West Coast",
+      "Nickel",
+      "3-Tech",
+      "Gap Fit"
+    ],
+    "likes": [
+      "Route Artist",
+      "Heads Up!",
+      "Rabbit Agility",
+      "Independent Hands",
+      "Alpha"
+    ]
+  },
+  "TB": {
+    "n": "Tampa Bay Buccaneers",
+    "outlook": "Bowles' aggressive blueprint; hunting vertical separators and sudden erasers.",
+    "window": "CHASING",
+    "needs": {
+      "OT": 88,
+      "QB": 15,
+      "WR": 85,
+      "EDGE": 82,
+      "CB": 85,
+      "DT": 88,
+      "LB": 75,
+      "S": 70,
+      "TE": 55,
+      "RB": 60
+    },
+    "schemes": [
+      "West Coast",
+      "Vertical Z",
+      "3-Tech",
+      "Nickel"
+    ],
+    "likes": [
+      "Route Artist",
+      "Track Speed",
+      "Heads Up!",
+      "Alpha",
+      "Rabbit Agility"
+    ]
+  },
+  "CAR": {
+    "n": "Carolina Panthers",
+    "outlook": "Surrounding Bryce with sudden separators and high-IQ protectors.",
+    "window": "REBUILDING",
+    "needs": {
+      "OT": 85,
+      "QB": 10,
+      "WR": 92,
+      "EDGE": 88,
+      "CB": 85,
+      "DT": 82,
+      "LB": 75,
+      "S": 70,
+      "TE": 65,
+      "RB": 70
+    },
+    "schemes": [
+      "RPO",
+      "Gap Fit",
+      "Strong 5",
+      "Nickel"
+    ],
+    "likes": [
+      "Rabbit Agility",
+      "Vision",
+      "Heads Up!",
+      "Alpha",
+      "Nasty"
     ]
   }
 };

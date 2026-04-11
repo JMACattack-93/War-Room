@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import ReactDOM from 'react-dom';
 
-/* DATA IMPORTS - Now using v10 as the core engine */
+/* --- MASTER DATA ARCHITECTURE (STRICT INTEGRITY) --- */
 import { BIG_BOARD } from './player_datav10'; 
+import { SCOUT_BOARD } from './scout_board'; 
+import { TRAIT_REGISTRY } from './traits';
 import { GM_DATA } from './GM_data'; 
 import { DRAFT_ORDER } from './draftorder100';
 import { TEAM_COLORS } from './team_colors'; 
@@ -9,394 +12,275 @@ import { COLLEGE_LOGOS } from './college_data';
 import { TEAM_WORDMARKS } from './wordmark_data';
 
 const s = {
-  surface: '#0a0c0f',         
-  surfaceLow: '#111418',      
-  surfaceHigh: '#1a1f24',     
-  secondary: '#66dd8b',       
-  textMain: '#dee3ea',        
-  textDim: '#8d909e',         
-  brightSapphire: '#3b82f6',
-  terminalGreen: '#39ff14', 
-  softTerminalGreen: '#3e9c5a',
-  needCritical: '#ef4444', 
-  needHigh: '#f97316',     
-  needModerate: '#fbbf24', 
-  needGood: '#10b981',
-  fallingPurple: '#a855f7',
-  qbCyan: '#22d3ee'      
+  surface: '#020406',         
+  surfaceLow: '#07090c',      
+  surfaceHigh: '#11151c',     
+  textMain: '#ffffff',        
+  textDim: '#94a3b8',         
+  accent: '#3b82f6', 
+  terminal: '#39ff14', 
+  pikachuYellow: '#facc15',
+  electricBlue: '#00eaff'
 };
 
-/* -------------------------------------------------------------------------- */
-/* DATA UTILITIES                                                              */
-/* -------------------------------------------------------------------------- */
-
-const formatHt = (ht) => {
-  if (!ht) return "N/A";
-  const str = String(ht);
-  return `${str[0]}'${str.slice(1,3)}"`;
+/* --- V69 FUZZY MATCHING ENGINE --- */
+const normalize = (name) => {
+  if (!name) return "";
+  return name.toLowerCase()
+    .replace(/\sjr\.?$/g, "")
+    .replace(/\siii$/g, "")
+    .replace(/\siv$/g, "")
+    .replace(/[^a-z0-9]/g, "")
+    .trim();
 };
 
-/* -------------------------------------------------------------------------- */
-/* THE HIGH-CHROME PILL COMPONENT                                             */
-/* -------------------------------------------------------------------------- */
+/* --- V69 GLOBAL OVERLAY PORTAL --- */
+const TraitPortal = ({ text, description, position, active, color }) => {
+  if (!active || !position) return null;
+  const shouldFlip = position.y < 350;
+  return ReactDOM.createPortal(
+    <div style={{
+      position: 'fixed', top: shouldFlip ? position.y + 65 : position.y - 20, left: position.x,
+      transform: `translateX(-50%) ${shouldFlip ? '' : 'translateY(-100%)'}`, width: '340px',
+      background: 'rgba(2, 4, 8, 0.99)', border: `2px solid ${color}`, padding: '24px', borderRadius: '20px',
+      color: '#fff', boxShadow: `0 40px 100px #000, 0 0 60px ${color}40`, zIndex: 10000000,
+      backdropFilter: 'blur(30px)', pointerEvents: 'none', animation: 'modalSlam 0.2s forwards'
+    }}>
+      <div style={{ color, fontWeight: '1000', textTransform: 'uppercase', letterSpacing: '4px', marginBottom: '10px', fontSize: '17px', borderBottom: `2px solid ${color}40`, paddingBottom: '8px' }}>SYSTEM_DECODE: {text}</div>
+      <div style={{ fontSize: '15px', lineHeight: '1.7', color: '#f1f5f9', fontWeight: '600', fontStyle: 'italic' }}>"{description}"</div>
+    </div>, document.body
+  );
+};
 
-const TraitBadge = ({ text, colorCode, customColor = null, size = 'md' }) => {
-  const palette = {
-    gold: { border: '#fbbf24', shine: 'rgba(251, 191, 36, 0.45)', text: '#fde68a' }, 
-    blue: { border: '#3b82f6', shine: 'rgba(59, 130, 246, 0.4)', text: '#fff' }, 
-    green: { border: '#10b981', shine: 'rgba(16, 185, 129, 0.45)', text: '#6ee7b7' },
-    red: { border: '#ef4444', shine: 'rgba(239, 68, 68, 0.45)', text: '#fca5a5' },
-    purple: { border: '#a855f7', shine: 'rgba(168, 85, 247, 0.45)', text: '#d8b4fe' },
-    cyan: { border: '#22d3ee', shine: 'rgba(34, 211, 238, 0.45)', text: '#fff' }
-  };
-  const c = customColor ? { border: customColor, shine: `${customColor}40`, text: '#fff' } : (palette[colorCode?.toLowerCase()] || palette.blue);
+/* --- V69 SOVEREIGN-CATHODE GOLD ENGINE --- */
+const CathodeSpline = () => (
+  <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: -20, overflow: 'visible' }}>
+    <filter id="sig-fusion-glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <path className="fused-spline spline-main" d="M5,5 Q50,-5 95,5 Q105,50 95,95 Q50,105 5,95 Q-5,50 5,5" filter="url(#sig-fusion-glow)" />
+    <path className="fused-spline spline-accent" d="M5,5 Q50,-5 95,5 Q105,50 95,95 Q50,105 5,95 Q-5,50 5,5" filter="url(#sig-fusion-glow)" />
+    <style>{`
+      @keyframes splineFlow { 0% { stroke-dashoffset: 400; opacity: 0.1; } 50% { opacity: 0.4; } 100% { stroke-dashoffset: 0; opacity: 0.1; } }
+      @keyframes popDischarge { 0%, 90%, 100% { filter: brightness(1) opacity(0.3); } 95% { filter: brightness(4) drop-shadow(0 0 15px ${s.electricBlue}); opacity: 1; } }
+      .fused-spline { fill: none; stroke-linecap: round; stroke-width: 2px; stroke-dasharray: 100 300; }
+      .spline-main { stroke: ${s.pikachuYellow}; animation: splineFlow 4s infinite linear; }
+      .spline-accent { stroke: ${s.electricBlue}; stroke-width: 3px; stroke-dasharray: 30 370; animation: splineFlow 2.5s infinite linear reverse, popDischarge 0.8s infinite; }
+    `}</style>
+  </svg>
+);
+
+const GrindingSparkStorm = () => (
+  <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+    {[...Array(6)].map((_, i) => (
+      <div key={i} className={`grind-node gn-${i}`}>
+        <div style={{ width: '1.5px', height: '1.5px', background: '#fff', borderRadius: '50%' }} />
+        <div className="vent-spark vs-1" /><div className="vent-spark vs-2" />
+      </div>
+    ))}
+    <style>{`
+      @keyframes perimeterRace { 0% { top: 0%; left: 0%; } 25% { top: 0%; left: 100%; } 50% { top: 100%; left: 100%; } 75% { top: 100%; left: 0%; } 100% { top: 0%; left: 0%; } }
+      @keyframes sparkThrow { 0% { transform: translate(0,0) rotate(var(--rot)) scale(1.8); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0); opacity: 0; } }
+      .grind-node { position: absolute; width: 1px; height: 1px; animation: perimeterRace 5s infinite linear; }
+      .vent-spark { position: absolute; width: 1px; height: 10px; background: linear-gradient(to top, white, ${s.pikachuYellow}); animation: sparkThrow 0.25s infinite ease-out; }
+      .vs-1 { --tx: -40px; --ty: -25px; --rot: 35deg; animation-delay: 0.05s; }
+      .vs-2 { --tx: 40px; --ty: 25px; --rot: -35deg; animation-delay: 0.15s; }
+      .gn-0 { animation-delay: 0s; } .gn-1 { animation-delay: -0.83s; } .gn-2 { animation-delay: -1.66s; } .gn-3 { animation-delay: -2.49s; } .gn-4 { animation-delay: -3.32s; } .gn-5 { animation-delay: -4.15s; }
+    `}</style>
+  </div>
+);
+
+const TraitGem = ({ text, category = 'silver', playerPos = 'ALL', size = 'md', isDossier = false }) => {
+  const [hovered, setHovered] = useState(false);
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const gemRef = useRef(null);
+  if (!text) return null;
+  const traitData = TRAIT_REGISTRY?.[text] || { category, description: 'Evaluation pending...' };
+  const cat = (traitData.category || category).toLowerCase();
+  
+  const themes = {
+    gold: { rim: 'linear-gradient(180deg, #fff, #fbbf24 45%, #78350f)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(251,191,36,0.15) 50%, rgba(120,53,15,1) 100%)', glow: '#fbbf24' },
+    ruby: { rim: 'linear-gradient(180deg, #ffbaba, #ef4444 45%, #450a0a)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(239,68,68,0.1) 50%, rgba(69,10,10,1) 100%)', glow: '#ef4444' },
+    sapphire: { rim: 'linear-gradient(180deg, #bae6fd, #3b82f6 45%, #082f49)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(59,130,246,0.1) 50%, rgba(8,47,73,1) 100%)', glow: '#3b82f6' },
+    emerald: { rim: 'linear-gradient(180deg, #d1fae5, #10b981 45%, #064e3b)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(16,185,129,0.1) 50%, rgba(6,78,59,1) 100%)', glow: '#10b981' },
+    silver: { rim: 'linear-gradient(180deg, #fff, #64748b 45%, #0f172a)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(71,85,105,0.1) 50%, rgba(2,6,23,1) 100%)', glow: '#94a3b8' }
+  }[cat] || { rim: '#444', gem: '#222', glow: '#666' };
 
   return (
-    <div style={{
-      background: `linear-gradient(180deg, rgba(255,255,255,0.1) 0%, ${c.shine} 15%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.9) 100%)`,
-      border: `1px solid ${c.border}`,
-      color: c.text,
-      padding: size === 'xl' ? '10px 18px' : size === 'sm' ? '5px 10px' : '8px 20px', 
-      borderRadius: '50px', 
-      fontFamily: 'Open Sans, sans-serif',
-      fontSize: size === 'xl' ? '13px' : size === 'sm' ? '10px' : '12px', 
-      fontWeight: '900', 
-      textTransform: 'uppercase',
-      letterSpacing: '1px', 
-      boxShadow: `0 4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2)`,
-      textAlign: 'center', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap'
-    }}>
-      {text}
+    <div ref={gemRef} onMouseEnter={() => { const r = gemRef.current.getBoundingClientRect(); setCoords({ x: r.left + r.width/2, y: r.top }); setHovered(true); }} onMouseLeave={() => setHovered(false)}
+      style={{ display: 'inline-flex', padding: '5px', background: '#000', borderRadius: '14px', boxShadow: 'inset 4px 4px 10px #000', margin: '5px', position: 'relative', cursor: 'help' }}>
+      <TraitPortal text={text} description={traitData.contextual?.[playerPos] || traitData.description} position={coords} active={hovered} color={themes.glow} />
+      <div style={{ padding: '2px', background: themes.rim, borderRadius: '8px', boxShadow: hovered ? `0 0 35px ${themes.glow}` : 'none', transition: '0.4s ease', transform: hovered ? 'scale(1.15) rotate(1deg)' : 'scale(1)', position: 'relative', overflow: isDossier && cat === 'gold' ? 'visible' : 'hidden' }}>
+        {isDossier && cat === 'gold' && (
+          <>
+            <div style={{ position: 'absolute', inset: -15, border: '12px solid #facc15', borderRadius: '20px', filter: 'blur(18px)', opacity: 0.4, animation: 'tensionBreathe 3.5s infinite ease-in-out' }} />
+            <GrindingSparkStorm /><CathodeSpline />
+          </>
+        )}
+        <div style={{ background: themes.gem, color: cat === 'gold' ? '#000' : '#fff', padding: size === 'xl' ? '12px 28px' : '7px 18px', borderRadius: '6px', fontSize: size === 'xl' ? '16px' : '11px', fontWeight: '1000', textTransform: 'uppercase', letterSpacing: '1.8px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.7)', boxShadow: `inset 0 0 15px rgba(255,255,255,0.45)`, position: 'relative', zIndex: 10 }}>{text}</div>
+      </div>
     </div>
   );
+};
+
+/* --- V69 DYNAMIC TRAIT LOADER --- 
+   This function ensures no traits are missed regardless of category name.
+*/
+const RenderAllTraits = ({ player, size = 'md', isDossier = false }) => {
+  if (!player.traits) return null;
+  return Object.entries(player.traits).map(([category, list]) => {
+    if (!Array.isArray(list)) return null;
+    return list.map(traitName => (
+      <TraitGem key={traitName} text={traitName} category={category} playerPos={player.pos} size={size} isDossier={isDossier} />
+    ));
+  });
 };
 
 export default function App() {
   const [appState, setAppState] = useState('LANDING'); 
   const [userTeams, setUserTeams] = useState([]); 
   const [search, setSearch] = useState("");
+  const [filterPos, setFilterPos] = useState("ALL");
   const [selectedId, setSelectedId] = useState(null);
   const [currentPickIndex, setCurrentPickIndex] = useState(0);
   const [draftResults, setDraftResults] = useState({});
   const [isSimulating, setIsSimulating] = useState(false);
-  const [jolt, setJolt] = useState(false);
 
   const currentPick = DRAFT_ORDER?.[currentPickIndex] || { teamKey: 'WAS', pick: 1 };
   const isUserOnClock = currentPick && userTeams.includes(currentPick.teamKey);
   const activeDraftTeam = currentPick?.teamKey || 'WAS';
-  
-  const teamPrimaryColor = TEAM_COLORS?.[activeDraftTeam]?.c || '#5A1414'; 
-  const teamSecColor = TEAM_COLORS?.[activeDraftTeam]?.sc || '#FFB612';
+  const teamColor = TEAM_COLORS?.[activeDraftTeam]?.c || s.accent; 
+  const teamSecColor = TEAM_COLORS?.[activeDraftTeam]?.sc || '#fff';
   const teamLogo = TEAM_COLORS?.[activeDraftTeam]?.logo || '';
-  const activeTeamData = GM_DATA?.[activeDraftTeam] || { n: 'Unknown', needs: {}, likes: [], outlook: 'Calibrating...', window: 'CHASING' };
+  const activeTeamData = GM_DATA?.[activeDraftTeam] || { n: 'Unknown', needs: {}, outlook: 'Synthesis Pending...' };
 
-  /* NEW NEURAL FIT LOGIC: Integrated for v10 Structured Traits */
+  const boardData = useMemo(() => {
+    const normalizedScoutKeys = {};
+    Object.keys(SCOUT_BOARD).forEach(key => { normalizedScoutKeys[normalize(key)] = SCOUT_BOARD[key]; });
+    return BIG_BOARD.map(p => {
+      const scoutData = normalizedScoutKeys[normalize(p.name)] || { rank: 999, scout_value: 0 };
+      return { ...p, scout_rank: scoutData.rank, scout_value: scoutData.scout_value };
+    }).sort((a, b) => a.scout_rank - b.scout_rank);
+  }, []);
+
+  const filteredBoard = boardData.filter(p => {
+    const isDrafted = Object.values(draftResults).some(dp => dp.name === p.name);
+    return !isDrafted && p.name.toLowerCase().includes(search.toLowerCase()) && (filterPos === "ALL" || p.pos === filterPos);
+  });
+
   const calculateFit = (player, teamKey) => {
-    if (!player || !teamKey) return { score: 0, reasons: [] };
-    const teamData = GM_DATA?.[teamKey] || { needs: {}, likes: [] };
-    const pKey = player.pos === 'IDL' ? 'DT' : player.pos;
-    const needScore = teamData?.needs?.[pKey] || 0;
-    
-    // Flatten structured traits for matching
-    const allPlayerTraits = [
-      ...(player.traits.chrome || []),
-      ...(player.traits.gold || []),
-      ...(player.traits.emerald || []),
-      ...(player.traits.sapphire || []),
-      ...(player.traits.ruby || [])
-    ];
-
-    const matchedTraits = allPlayerTraits.filter(t => 
-      (teamData.likes || []).some(like => like.toLowerCase() === t.toLowerCase())
-    );
-
-    // Using 85 as a baseline grade since grade isn't explicit in v10 yet
-    const baseGrade = 85; 
-    const score = Math.min(99, Math.round((needScore * 0.4) + (baseGrade * 0.3) + (matchedTraits.length * 12)));
-    const reasons = [];
-    if (needScore > 85) reasons.push("CRITICAL ROSTER HOLE");
-    if (player.traits.gold.length > 0) reasons.push("ELITE CEILING DETECTED");
-    if (matchedTraits.length > 0) reasons.push(`${matchedTraits[0].toUpperCase()} SCHEME SYNERGY`);
-    
-    return { score, reasons };
+    if (!player || !teamKey) return { score: 0 };
+    const gm = GM_DATA?.[teamKey] || {};
+    let score = (gm.needs?.[player.pos] || 0) * 0.45;
+    if ((player.traits?.silver || []).some(c => (gm.schemes || []).includes(c))) score += 25;
+    if (player.traits?.gold) score += (player.traits.gold.length * 18);
+    return { score: Math.min(99, Math.round(score + 10)) };
   };
 
-  const handleDraft = (playerId) => {
-    const player = BIG_BOARD.find((p, index) => (p.id || index) === playerId);
-    if (!player) return;
-    setJolt(true);
-    setTimeout(() => setJolt(false), 200);
-    setDraftResults(prev => ({ ...prev, [currentPick.pick]: player }));
+  const handleDraft = (id) => {
+    const p = boardData.find(player => player.id === id);
+    if (!p) return;
+    setDraftResults(prev => ({ ...prev, [currentPick.pick]: p }));
     setCurrentPickIndex(prev => prev + 1);
     setSelectedId(null);
-  };
-
-  const handleSelectAll = () => {
-    const allKeys = Object.keys(GM_DATA);
-    setUserTeams(userTeams.length === allKeys.length ? [] : allKeys);
-  };
-
-  const getNeedColor = (val) => {
-    if (val >= 90) return s.needCritical; 
-    if (val >= 75) return s.needHigh;
-    if (val >= 60) return s.needModerate;
-    return s.needGood; 
-  }
-
-  const getWindowColor = (win) => {
-    switch(win) {
-        case 'CONTENDER': return 'gold';
-        case 'CHASING': return 'blue';
-        case 'REBUILDING': return 'green';
-        case 'FALLING': return 'purple';
-        case 'QB WINDOW': return 'cyan';
-        default: return 'blue';
-    }
-  }
-
-  const getAffinityColor = (trait) => {
-    const t = trait.toLowerCase();
-    if (t.includes('speed') || t.includes('length') || t.includes('power') || t.includes('motor') || t.includes('physical')) return 'red';
-    if (t.includes('iq') || t.includes('character') || t.includes('leader') || t.includes('captain')) return 'gold';
-    if (t.includes('grit') || t.includes('blue chip') || t.includes('heisman')) return 'purple';
-    return 'cyan';
   };
 
   useEffect(() => {
     if (isSimulating && currentPick && !isUserOnClock) {
       const timer = setTimeout(() => {
-        const available = BIG_BOARD.filter(p => !Object.values(draftResults).some(dr => dr.name === p.name));
-        if (available[0]) handleDraft(available[0].id || 0);
-      }, 700);
+        const available = boardData.filter(p => !Object.values(draftResults).some(dr => dr.name === p.name));
+        if (available.length > 0) handleDraft(available[0].id);
+      }, 750);
       return () => clearTimeout(timer);
-    } else if (isUserOnClock) { setIsSimulating(false); }
+    }
   }, [currentPickIndex, isSimulating, isUserOnClock]);
 
-  // Handle indexing fallback for ID
-  const selectedPlayer = BIG_BOARD.find((p, index) => (p.id || index) === selectedId);
+  const selectedPlayer = selectedId !== null ? boardData.find(p => p.id === selectedId) : null;
 
   return (
     <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', background: s.surface, color: '#fff', fontFamily: 'Lexend, sans-serif', overflow: 'hidden' }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap');
-        html, body, #root { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #0a0c0f; position: fixed; left: 0; top: 0; }
-        * { box-sizing: border-box; scrollbar-width: none; -ms-overflow-style: none; }
-        *::-webkit-scrollbar { width: 0; height: 0; display: none; }
-        @keyframes superAura { 
-          0%, 100% { border-color: var(--p); box-shadow: 0 0 40px var(--p-40), 0 0 100px var(--p-20); } 
-          50% { border-color: var(--s); box-shadow: 0 0 70px var(--s-60), 0 0 140px var(--s-40); } 
-        }
-        @keyframes scanPulse { 0% { box-shadow: 0 0 0 0px ${s.terminalGreen}40; } 100% { box-shadow: 0 0 0 40px ${s.terminalGreen}00; } }
-        @keyframes modalSlam { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes ultraPulse { 0%, 100% { box-shadow: 0 0 20px var(--team-color-40); border-color: var(--team-color); } 50% { box-shadow: 0 0 60px var(--team-color-80); border-color: #fff; } }
-        @keyframes slideInfo { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-        .jolt-active { animation: joltSlam 0.2s ease-out; }
-      `}</style>
+      <div style={{ width: '149.25%', height: '149.25%', transform: 'scale(0.67)', transformOrigin: 'top left', background: s.surface }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Inter:wght@400;500;700&display=swap');
+          * { box-sizing: border-box; -ms-overflow-style: none; scrollbar-width: none; }
+          *::-webkit-scrollbar { display: none; }
+          @keyframes superAura { 0%, 100% { border-color: var(--p); box-shadow: 0 0 70px var(--p-40); } 50% { border-color: #fff; box-shadow: 0 0 120px var(--p-60); } }
+          @keyframes modalSlam { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes tensionBreathe { 0%, 100% { opacity: 0.25; filter: blur(15px); } 50% { opacity: 0.6; filter: blur(22px); } }
+          .player-card { transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(255,255,255,0.06); position: relative; cursor: pointer; overflow: hidden; }
+          .player-card:hover { border-color: rgba(59, 130, 246, 0.6); background: #0c1117 !important; transform: translateX(12px); }
+          .talent-tower { background: linear-gradient(180deg, rgba(59, 130, 246, 0.25) 0%, rgba(0,0,0,0.95) 100%); border-left: 2px solid rgba(59, 130, 246, 0.45); }
+          .pos-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: #8d909e; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 16px; }
+          .pos-btn-active { background: ${s.accent}; color: #fff; border-color: #fff; box-shadow: 0 0 25px ${s.accent}60; }
+          .team-tile-active { animation: selectGlow 3s infinite; }
+          @keyframes selectGlow { 0%, 100% { border-color: var(--tc); box-shadow: 0 0 25px var(--tc-30); } 50% { border-color: #fff; box-shadow: 0 0 50px var(--tc-50); } }
+        `}</style>
 
-      {appState === 'LANDING' && (
-        <div style={{ height: '100vh', width: '100vw', padding: '60px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-          <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '60px' }}>
-            <div>
-              <span style={{ color: s.brightSapphire, fontWeight: '900', letterSpacing: '10px', fontSize: '14px' }}>TACTICAL INTERFACE v10.1</span>
-              <h1 style={{ fontSize: '110px', fontWeight: '950', fontStyle: 'italic', color: '#fff', letterSpacing: '-6px', margin: 0, lineHeight: 0.8 }}>WAR ROOM</h1>
+        {appState === 'LANDING' && (
+          <div style={{ height: '100%', width: '100%', padding: '100px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '80px' }}>
+              <div><span style={{ color: s.accent, fontWeight: '1000', letterSpacing: '20px', fontSize: '24px' }}>TACTICAL INTERFACE V69.0</span><h1 style={{ fontSize: '180px', fontWeight: '950', fontStyle: 'italic', color: '#fff', letterSpacing: '-12px', margin: 0, lineHeight: 0.8 }}>WAR ROOM</h1></div>
+              <div style={{ display: 'flex', gap: '30px' }}><button onClick={() => setUserTeams(Object.keys(GM_DATA))} style={{ background: 'rgba(255,255,255,0.03)', color: '#fff', padding: '30px 60px', borderRadius: '20px', fontWeight: '1000', border: '1px solid rgba(255,255,255,0.15)', cursor: 'pointer', fontSize: '24px' }}>SELECT ALL</button><button onClick={() => setAppState('DRAFTING')} style={{ background: s.accent, color: '#fff', padding: '45px 150px', borderRadius: '35px', fontWeight: '1000', border: 'none', cursor: 'pointer', fontSize: '56px', fontStyle: 'italic', boxShadow: `0 0 100px ${s.accent}80` }}>INITIATE</button></div>
+            </header>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '35px' }}>
+              {Object.keys(GM_DATA).sort().map(key => (
+                <div key={key} onClick={() => setUserTeams(v => v.includes(key) ? v.filter(k => k !== key) : [...v, key])} className={userTeams.includes(key) ? "team-tile-active" : ""} style={{ background: userTeams.includes(key) ? `${TEAM_COLORS[key]?.c}35` : s.surfaceLow, padding: '60px', borderRadius: '55px', border: `4px solid ${userTeams.includes(key) ? TEAM_COLORS[key]?.c : 'transparent'}`, textAlign: 'center', cursor: 'pointer', transition: '0.4s', '--tc': TEAM_COLORS[key]?.c }}><img src={TEAM_COLORS[key]?.logo} style={{ height: '130px', opacity: userTeams.includes(key) ? 1 : 0.2 }} /><div style={{ fontWeight: '1000', marginTop: '25px', textTransform: 'uppercase', fontSize: '24px' }}>{GM_DATA[key]?.n}</div></div>
+              ))}
             </div>
-            <div style={{ display: 'flex', gap: '20px' }}>
-                <button onClick={handleSelectAll} style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', padding: '15px 40px', borderRadius: '15px', fontWeight: '1000', border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer' }}>{userTeams.length === Object.keys(GM_DATA).length ? 'DESELECT ALL' : 'SELECT ALL TEAMS'}</button>
-                <button onClick={() => setAppState('DRAFTING')} style={{ background: s.brightSapphire, color: '#fff', padding: '25px 80px', borderRadius: '20px', fontWeight: '1000', border: 'none', cursor: 'pointer', fontSize: '28px', fontStyle: 'italic', boxShadow: `0 0 60px ${s.brightSapphire}60` }}>INITIATE</button>
-            </div>
-          </header>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '30px', paddingBottom: '100px' }}>
-            {Object.keys(GM_DATA).sort().map(key => {
-              const isSelected = userTeams.includes(key);
-              const teamC = TEAM_COLORS[key]?.c || '#555';
-              return (
-                <div key={key} onClick={() => setUserTeams(prev => isSelected ? prev.filter(k => k !== key) : [...prev, key])} style={{ background: isSelected ? `${teamC}35` : s.surfaceLow, padding: '35px', borderRadius: '35px', border: `4px solid ${isSelected ? teamC : 'transparent'}`, textAlign: 'center', cursor: 'pointer', animation: isSelected ? 'ultraPulse 2s infinite' : 'none', '--team-color': teamC, '--team-color-40': `${teamC}40`, '--team-color-80': `${teamC}80` }}>
-                  <img src={TEAM_COLORS[key]?.logo} style={{ height: '75px', opacity: isSelected ? 1 : 0.2 }} alt="" />
-                  <div style={{ fontWeight: '1000', marginTop: '10px', textTransform: 'uppercase' }}>{GM_DATA[key]?.n}</div>
-                </div>
-              );
-            })}
           </div>
-        </div>
-      )}
+        )}
 
-      {appState === 'DRAFTING' && (
-        <div className={jolt ? "jolt-active" : ""} style={{ display: 'grid', gridTemplateColumns: '240px 1fr 340px', height: '100vh', width: '100vw' }}>
-          
-          <aside style={{ background: s.surfaceLow, borderRight: '1px solid rgba(255,255,255,0.08)', overflowY: 'auto' }}>
-            {DRAFT_ORDER.map((p, i) => {
-              const draftedPlayer = draftResults[p.pick];
-              const isActive = i === currentPickIndex;
-              const teamCol = TEAM_COLORS?.[p.teamKey]?.c || '#555';
-              return (
-                <div key={i} style={{ height: '95px', display: 'flex', alignItems: 'center', padding: '0 20px', borderRight: isActive ? `6px solid ${teamCol}` : 'none', background: isActive ? `${teamCol}15` : 'transparent', opacity: i < currentPickIndex ? 0.4 : 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                    <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '-5px', top: '-10px', fontSize: '18px', fontWeight: '1000', color: 'rgba(255,255,255,0.1)' }}>{p.pick}</span>
-                      <img src={TEAM_COLORS?.[p.teamKey]?.logo} style={{ height: '45px' }} alt="" />
-                    </div>
-                    {draftedPlayer && (
-                      <div style={{ display: 'flex', flexDirection: 'column', animation: 'slideInfo 0.4s forwards' }}>
-                        <span style={{ fontSize: '11px', fontWeight: '900', color: s.brightSapphire }}>{draftedPlayer.pos}</span>
-                        <span style={{ fontSize: '13px', fontWeight: '1000', color: '#fff', whiteSpace: 'nowrap' }}>{draftedPlayer.name.toUpperCase()}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </aside>
-
-          <main style={{ overflowY: 'auto', padding: '40px 30px', background: s.surface }}>
-             <header style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1 style={{ fontSize: '70px', fontWeight: '950', fontStyle: 'italic', letterSpacing: '-4px' }}>2026 BOARD</h1>
-                <input placeholder="SEARCH..." style={{ background: s.surfaceLow, border: 'none', padding: '15px 25px', borderRadius: '15px', color: '#fff', width: '300px', fontWeight: '800' }} onChange={(e) => setSearch(e.target.value)} />
-             </header>
-
-             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {BIG_BOARD.filter(p => !Object.values(draftResults).some(dp => dp.name === p.name) && p.name.toLowerCase().includes(search.toLowerCase())).map((player, idx) => {
-                const fit = calculateFit(player, activeDraftTeam);
-                const [firstName, ...lastNameParts] = player.name.split(' ');
-                const lastName = lastNameParts.join(' ');
+        {appState === 'DRAFTING' && selectedId === null && (
+          <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr 550px', height: '100%', width: '100%' }}>
+            <aside style={{ background: s.surfaceLow, borderRight: '1px solid rgba(255,255,255,0.08)', overflowY: 'auto' }}>
+              {DRAFT_ORDER.map((p, i) => {
+                const drafted = draftResults[p.pick];
+                const isActive = i === currentPickIndex;
                 return (
-                  <div key={player.name} onClick={() => setSelectedId(player.id || idx)} style={{ background: s.surfaceLow, borderRadius: '25px', display: 'grid', gridTemplateColumns: '1.4fr 1.1fr 180px', border: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
-                    <div style={{ padding: '30px', position: 'relative' }}>
-                      <div style={{ fontSize: '50px', fontWeight: '1000', color: s.brightSapphire, fontStyle: 'italic', position: 'absolute', left: '20px', top: '10px', opacity: 0.85 }}>{player.pos}</div>
-                      <img src={COLLEGE_LOGOS[player.school]} style={{ position: 'absolute', right: '120px', height: '180px', opacity: 0.15, filter: 'grayscale(100%) invert(1)' }} alt="" />
-                      <div style={{ position: 'relative', zIndex: 2, marginTop: '30px' }}>
-                        <div style={{ fontSize: '20px', fontWeight: '1000', color: s.softTerminalGreen, textTransform: 'uppercase', letterSpacing: '2px' }}>{player.school}</div>
-                        <div style={{ fontSize: '32px', fontWeight: '900', color: '#fff', textTransform: 'uppercase', fontStyle: 'italic', marginBottom: '-10px', marginTop: '10px' }}>{firstName}</div>
-                        <h2 style={{ fontSize: '100px', fontWeight: '1000', textTransform: 'uppercase', fontStyle: 'italic', color: '#fff', letterSpacing: '-6px', margin: 0, lineHeight: 0.8 }}>{lastName}</h2>
-                      </div>
-                    </div>
-                    
-                    {/* NEW TRAIT MAPPING FOR v10 */}
-                    <div style={{ padding: '30px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', alignItems: 'center' }}>
-                        {player.traits.chrome.map(t => <TraitBadge key={t} text={t} colorCode="cyan" />)}
-                        {player.traits.gold.map(t => <TraitBadge key={t} text={t} colorCode="gold" />)}
-                        {player.traits.emerald.map(t => <TraitBadge key={t} text={t} colorCode="green" />)}
-                        {player.traits.ruby.map(t => <TraitBadge key={t} text={t} colorCode="red" />)}
-                        {player.traits.sapphire.map(t => <TraitBadge key={t} text={t} colorCode="blue" />)}
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ flex: 1, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                           <span style={{ fontSize: '10px', color: s.textDim, fontWeight: '1000' }}>TALENT</span>
-                           <span style={{ fontSize: '32px', fontWeight: '1000', color: s.brightSapphire }}>{Math.round(85)}</span>
-                        </div>
-                        <div style={{ flex: 1.4, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                            <span style={{ fontSize: '10px', color: s.textDim, fontWeight: '1000' }}>NEURAL FIT</span>
-                            <span style={{ fontSize: '48px', fontWeight: '1000', color: s.terminalGreen }}>{fit.score}</span>
-                        </div>
-                    </div>
+                  <div key={i} style={{ height: '140px', display: 'flex', alignItems: 'center', padding: '0 50px', borderRight: isActive ? `20px solid ${TEAM_COLORS[p.teamKey]?.c}` : 'none', background: isActive ? `${TEAM_COLORS[p.teamKey]?.c}15` : 'transparent', opacity: i < currentPickIndex ? 0.35 : 1 }}>
+                    <img src={TEAM_COLORS[p.teamKey]?.logo} style={{ height: '80px', marginRight: '30px' }} />
+                    <div><div style={{ fontSize: '18px', fontWeight: '1000', color: s.accent }}>{drafted?.pos || 'PICK ' + p.pick}</div><div style={{ fontSize: '24px', fontWeight: '1000', textTransform: 'uppercase', color: '#fff' }}>{drafted?.name || 'ON CLOCK'}</div></div>
                   </div>
                 );
               })}
-             </div>
-          </main>
-
-          {/* CRYSTALLIZED DOSSIER MODAL v10 */}
-          {selectedId !== null && (
-            <div style={{ position: 'fixed', inset: 0, background: `radial-gradient(circle at center, ${teamPrimaryColor}60 0%, #05070a 100%)`, backdropFilter: 'blur(60px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }} onClick={() => setSelectedId(null)}>
-              <div style={{ 
-                  width: '100%', maxWidth: '1200px', background: 'linear-gradient(145deg, #1a1f24 0%, #0d1117 100%)', 
-                  borderRadius: '30px', border: '5px solid transparent', 
-                  animation: 'superAura 3s infinite ease-in-out, modalSlam 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                  display: 'grid', gridTemplateColumns: '1fr 420px', overflow: 'hidden',
-                  '--p': teamPrimaryColor, '--p-40': `${teamPrimaryColor}40`, '--p-20': `${teamPrimaryColor}20`,
-                  '--s': teamSecColor, '--s-60': `${teamSecColor}60`, '--s-40': `${teamSecColor}40`
-              }} onClick={(e) => e.stopPropagation()}>
-                
-                <div style={{ padding: '40px 60px', borderRight: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflowY: 'auto', maxHeight: '90vh' }}>
-                    <img src={COLLEGE_LOGOS[selectedPlayer.school]} style={{ position: 'absolute', top: '50%', left: '40%', transform: 'translate(-50%, -50%)', height: '600px', opacity: 0.04, filter: 'grayscale(100%) brightness(3)', pointerEvents: 'none' }} alt="" />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '40px', marginBottom: '30px', position: 'relative', zIndex: 2 }}>
-                        <div style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '25px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: `0 0 40px ${teamPrimaryColor}40` }}>
-                            <img src={COLLEGE_LOGOS[selectedPlayer.school]} style={{ height: '90px' }} alt="" />
-                        </div>
-                        <div>
-                            <div style={{ display: 'flex', gap: '15px', marginBottom: '5px' }}>
-                              <span style={{ background: s.softTerminalGreen, color: '#000', padding: '4px 12px', borderRadius: '4px', fontSize: '11px', fontWeight: '1000' }}>{selectedPlayer.school.toUpperCase()}</span>
-                              <span style={{ color: teamSecColor, fontSize: '11px', fontWeight: '800', fontFamily: 'JetBrains Mono' }}>ACCESS_ID: BB_{selectedId}</span>
-                            </div>
-                            <h2 style={{ fontSize: '100px', fontWeight: '1000', fontStyle: 'italic', margin: 0, lineHeight: 0.75, letterSpacing: '-6px', color: '#fff' }}>{selectedPlayer.name.toUpperCase()}</h2>
-                            <div style={{ fontSize: '22px', fontWeight: '900', color: s.brightSapphire, marginTop: '10px' }}>{selectedPlayer.pos} <span style={{ opacity: 0.2 }}>/</span> {selectedPlayer.traits.chrome[0]}</div>
-                        </div>
-                    </div>
-
-                    {/* NEW CRYSTALLIZED SUMMARY BLOCK */}
-                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '30px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '30px', position: 'relative', zIndex: 3 }}>
-                        <div style={{ fontSize: '10px', color: s.brightSapphire, fontWeight: '1000', letterSpacing: '4px', marginBottom: '12px' }}>CONSENSUS_SCOUTING_REPORT</div>
-                        <p style={{ fontSize: '18px', lineHeight: 1.6, color: s.textMain, fontWeight: '500', margin: 0 }}>{selectedPlayer.summary}</p>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', position: 'relative', zIndex: 2 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                            <div style={{ background: 'rgba(0,0,0,0.4)', padding: '20px', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'inset 0 2px 20px #000' }}>
-                                <div style={{ fontSize: '10px', color: s.softTerminalGreen, fontWeight: '1000', marginBottom: '12px', letterSpacing: '3px' }}>VERIFIED_TESTING_DATA</div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', fontFamily: 'JetBrains Mono' }}>
-                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>HT/WT</div><div style={{ fontSize: '22px', fontWeight: '900' }}>{formatHt(selectedPlayer.testing.ht)} / {selectedPlayer.testing.wt}</div></div>
-                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>40 / 10SP</div><div style={{ fontSize: '22px', fontWeight: '900' }}>{selectedPlayer.testing.forty || 'N/A'} / {selectedPlayer.testing.ten || 'N/A'}</div></div>
-                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>VERT/BROAD</div><div style={{ fontSize: '22px', fontWeight: '900' }}>{selectedPlayer.testing.vert || 'N/A'} / {selectedPlayer.testing.broad || 'N/A'}</div></div>
-                                    <div><div style={{ fontSize: '10px', opacity: 0.4 }}>ARMS/BENCH</div><div style={{ fontSize: '22px', fontWeight: '900' }}>{selectedPlayer.testing.arm ? (selectedPlayer.testing.arm / 100).toFixed(1) + '"' : 'N/A'} / {selectedPlayer.testing.bench || 'N/A'}</div></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div style={{ fontSize: '10px', color: s.textDim, fontWeight: '1000', marginBottom: '15px', letterSpacing: '4px' }}>TRAIT_EVALUATION</div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                                {selectedPlayer.traits.chrome.map(t => <TraitBadge key={t} text={t} colorCode="cyan" size="xl" />)}
-                                {selectedPlayer.traits.gold.map(t => <TraitBadge key={t} text={t} colorCode="gold" size="xl" />)}
-                                {selectedPlayer.traits.emerald.map(t => <TraitBadge key={t} text={t} colorCode="green" size="xl" />)}
-                                {selectedPlayer.traits.ruby.map(t => <TraitBadge key={t} text={t} colorCode="red" size="xl" />)}
-                                {selectedPlayer.traits.sapphire.map(t => <TraitBadge key={t} text={t} colorCode="blue" size="xl" />)}
-                            </div>
-                        </div>
-                    </div>
-                    {isUserOnClock && (
-                        <button onClick={() => handleDraft(selectedId)} style={{ width: '100%', marginTop: '40px', background: `linear-gradient(135deg, ${teamPrimaryColor} 0%, ${teamSecColor} 100%)`, padding: '28px', borderRadius: '20px', border: 'none', color: '#000', fontSize: '26px', fontWeight: '1000', fontStyle: 'italic', cursor: 'pointer', letterSpacing: '4px', boxShadow: `0 15px 50px ${teamPrimaryColor}60` }}>CONFIRM DRAFT PICK</button>
-                    )}
+            </aside>
+            <main style={{ overflowY: 'auto', padding: '100px 80px', background: s.surface }}>
+                <header style={{ marginBottom: '80px' }}><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}><h1 style={{ fontSize: '120px', fontWeight: '1000', fontStyle: 'italic', margin: 0, letterSpacing: '-8px' }}>BIG BOARD</h1><div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>{!isUserOnClock && <button onClick={() => setIsSimulating(!isSimulating)} style={{ background: isSimulating ? '#ef4444' : s.terminal, color: '#000', border: 'none', padding: '24px 48px', borderRadius: '15px', fontWeight: '1000', cursor: 'pointer', fontSize: '22px' }}>{isSimulating ? 'PAUSE' : 'AUTO-DRAFT'}</button>}<input placeholder="SEARCH TERMINAL..." style={{ background: s.surfaceHigh, border: 'none', padding: '30px 60px', borderRadius: '25px', color: '#fff', width: '500px', fontWeight: '800', fontSize: '24px', border: '1px solid rgba(255,255,255,0.1)' }} onChange={(e) => setSearch(e.target.value)} /></div></div><div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>{["ALL", "QB", "RB", "WR", "TE", "OT", "iOL", "EDGE", "iDL", "LB", "DB"].map(pos => (<button key={pos} onClick={() => setFilterPos(pos)} className={`pos-btn ${filterPos === pos ? 'pos-btn-active' : ''}`}>{pos}</button>))}</div></header>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                 {filteredBoard.map((p) => {
+                   const fit = calculateFit(p, activeDraftTeam);
+                   return (
+                     <div key={p.id} onClick={() => setSelectedId(p.id)} className="player-card" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 220px', background: s.surfaceLow, borderRadius: '50px', height: '260px' }}>
+                       <div style={{ padding: '50px', position: 'relative', zIndex: 2 }}><img src={COLLEGE_LOGOS[p.school]} style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)', height: '260px', opacity: 0.15, mixBlendMode: 'overlay', pointerEvents: 'none' }} /><div style={{ fontSize: '28px', fontWeight: '1000', color: s.accent, textTransform: 'uppercase' }}>{p.school}</div><div style={{ fontSize: '42px', fontWeight: '900', color: s.textDim, textTransform: 'uppercase', fontStyle: 'italic', marginBottom: '-10px' }}>{p.name.split(' ')[0]}</div><h2 style={{ fontSize: '120px', fontWeight: '1000', textTransform: 'uppercase', fontStyle: 'italic', color: '#fff', letterSpacing: '-6px', margin: 0, lineHeight: 0.8, textShadow: '0 8px 30px #000' }}>{p.name.split(' ').slice(1).join(' ')}</h2></div>
+                       {/* V69 RESTORED TRAIT SCANNER */}
+                       <div style={{ padding: '50px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignContent: 'center' }}>
+                         <RenderAllTraits player={p} />
+                       </div>
+                       <div className="talent-tower" style={{ display: 'flex', flexDirection: 'column' }}><div style={{ flex: 1, borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: '14px', color: s.accent, fontWeight: '1000' }}>TALENT</span><span style={{ fontSize: '44px', fontWeight: '1000', color: '#fff' }}>{p.scout_value}</span></div><div style={{ flex: 1.4, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: '14px', color: teamSecColor, fontWeight: '1000' }}>NEURAL FIT</span><span style={{ fontSize: '72px', fontWeight: '1000', color: '#fff', textShadow: `0 0 35px ${teamColor}` }}>{fit.score}</span></div></div>
+                     </div>
+                   );
+                 })}
                 </div>
+            </main>
+            <aside style={{ background: s.surfaceLow, borderLeft: '1px solid rgba(255,255,255,0.08)', padding: '70px', overflowY: 'auto' }}>
+              <div style={{ textAlign: 'center', marginBottom: '80px' }}><img src={TEAM_COLORS[activeDraftTeam]?.logo} style={{ height: '220px', filter: `drop-shadow(0 0 80px ${teamColor}80)` }} /><h2 style={{ fontSize: '72px', fontWeight: '1000', fontStyle: 'italic', marginTop: '40px', color: '#fff', textShadow: `0 0 40px ${teamColor}` }}>{activeTeamData.n}</h2><div style={{ color: teamSecColor, fontWeight: '1000', letterSpacing: '18px', fontSize: '22px' }}>COMMAND DOSSIER</div></div>
+              <div style={{ background: '#000', border: '2px solid rgba(255,255,255,0.1)', padding: '50px', borderRadius: '40px', marginBottom: '60px' }}><div style={{ fontSize: '16px', color: s.accent, fontWeight: '1000', letterSpacing: '8px', marginBottom: '25px' }}>OUTLOOK_SYNTHESIS</div><p style={{ fontSize: '24px', color: '#fff', lineHeight: 1.8, fontWeight: '600' }}>{activeTeamData.outlook}</p></div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>{Object.entries(activeTeamData.needs || {}).sort((a,b) => b[1]-a[1]).slice(0, 6).map(([pos, val]) => (<div key={pos} style={{ background: 'rgba(255,255,255,0.03)', padding: '30px', borderRadius: '35px', border: '1px solid rgba(255,255,255,0.08)' }}><div style={{ fontSize: '42px', fontWeight: '1000', color: val > 80 ? '#ef4444' : s.terminal }}>{pos}</div><div style={{ fontSize: '18px', opacity: 0.5, fontWeight: '800' }}>PRIORITY: {val}</div></div>))}</div>
+            </aside>
+          </div>
+        )}
 
-                <div style={{ background: 'rgba(0,0,0,0.3)', padding: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                    <div style={{ position: 'absolute', width: '250px', height: '250px', borderRadius: '50%', animation: 'scanPulse 3s infinite' }} />
-                    <img src={teamLogo} style={{ height: '150px', marginBottom: '30px', filter: `drop-shadow(0 0 30px ${teamPrimaryColor}60)`, position: 'relative' }} alt="" />
-                    <div style={{ fontSize: '12px', color: teamSecColor, fontWeight: '1000', letterSpacing: '10px', marginBottom: '10px' }}>NEURAL_FIT</div>
-                    <div style={{ fontSize: '180px', fontWeight: '1000', color: s.terminalGreen, lineHeight: 0.8 }}>{calculateFit(selectedPlayer, activeDraftTeam).score}</div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '30px', width: '100%' }}>
-                        {calculateFit(selectedPlayer, activeDraftTeam).reasons.map(r => (
-                            <div key={r} style={{ background: 'rgba(57, 255, 20, 0.05)', border: `1px solid ${s.terminalGreen}20`, padding: '12px', borderRadius: '10px', color: s.terminalGreen, fontSize: '13px', fontWeight: '900', textAlign: 'center' }}>SCAN: {r}</div>
-                        ))}
-                    </div>
-                </div>
-              </div>
+        {selectedId !== null && selectedPlayer && (
+          <div style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(50px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setSelectedId(null)}>
+            <div style={{ width: '94%', height: '950px', background: '#0b0e14', borderRadius: '100px', border: '15px solid transparent', animation: 'superAura 3.5s infinite, modalSlam 0.4s forwards', display: 'grid', gridTemplateColumns: '1.4fr 400px', overflow: 'hidden', position: 'relative', '--p': teamColor, '--p-40': `${teamColor}40`, '--p-60': `${teamColor}60` }} onClick={(e) => e.stopPropagation()}>
+                <div style={{ position: 'absolute', top: '80px', right: '480px', fontSize: '140px', fontWeight: '1000', fontFamily: 'JetBrains Mono', color: '#fff', opacity: 0.08, pointerEvents: 'none' }}>{selectedPlayer.pos}</div>
+              <div style={{ padding: '120px 100px', position: 'relative', borderRight: '2px solid rgba(255,255,255,0.1)' }}><img src={COLLEGE_LOGOS[selectedPlayer.school]} style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', height: '1200px', opacity: 0.05, filter: 'grayscale(100%) brightness(12)' }} /><div style={{ display: 'flex', alignItems: 'center', gap: '50px', marginBottom: '60px', position: 'relative', zIndex: 5 }}><img src={COLLEGE_LOGOS[selectedPlayer.school]} style={{ height: '130px', background: 'rgba(255,255,255,0.08)', padding: '35px', borderRadius: '45px' }} /><div><h2 style={{ fontSize: '130px', fontWeight: '1000', fontStyle: 'italic', margin: 0, lineHeight: 0.75, letterSpacing: '-10px', color: '#fff', textShadow: '0 20px 80px rgba(0,0,0,1)' }}>{selectedPlayer.name.toUpperCase()}</h2><div style={{ fontSize: '38px', fontWeight: '1000', color: s.accent, marginTop: '15px' }}>{selectedPlayer.school.toUpperCase()} <span style={{ opacity: 0.2 }}>/</span> RANK #{selectedPlayer.scout_rank}</div></div></div><div style={{ background: 'rgba(255,255,255,0.03)', padding: '70px', borderRadius: '70px', border: '1px solid rgba(255,255,255,0.15)', marginTop: '50px', position: 'relative', zIndex: 6 }}><div style={{ fontSize: '16px', color: s.accent, fontWeight: '1000', letterSpacing: '10px', marginBottom: '25px' }}>CONSENSUS_SYNTHESIS</div><p style={{ fontSize: '30px', lineHeight: 1.8, color: '#f8fafc', fontWeight: '600', fontFamily: 'Inter, sans-serif' }}>{selectedPlayer.summary}</p></div><div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', marginTop: '60px', position: 'relative', zIndex: 10 }}>
+                {/* Dossier Recursive Loader */}
+                <RenderAllTraits player={selectedPlayer} size="xl" isDossier={true} />
+              </div></div>
+              <div style={{ background: 'rgba(0,0,0,0.85)', padding: '100px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', borderLeft: '4px solid rgba(255,255,255,0.1)' }}>{isUserOnClock && (<button onClick={() => handleDraft(selectedPlayer.id)} style={{ width: '100%', background: `linear-gradient(135deg, ${teamColor}, #fff)`, padding: '40px', borderRadius: '50px', border: 'none', color: '#000', fontSize: '38px', fontWeight: '1000', fontStyle: 'italic', cursor: 'pointer', boxShadow: `0 30px 80px ${teamColor}80`, textTransform: 'uppercase', marginBottom: '80px' }}>DRAFT PLAYER</button>)}<div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}><div style={{ fontSize: '22px', color: teamSecColor, fontWeight: '1000', letterSpacing: '20px', marginBottom: '20px' }}>FIT</div><div style={{ fontSize: '240px', fontWeight: '1000', color: '#fff', lineHeight: 0.8, textShadow: `0 0 80px ${teamColor}` }}>{calculateFit(selectedPlayer, activeDraftTeam).score}</div></div></div>
             </div>
-          )}
-
-          <aside style={{ background: s.surfaceLow, borderLeft: '1px solid rgba(255,255,255,0.08)', padding: '25px', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div style={{ textAlign: 'center' }}>
-                 <img src={teamLogo} style={{ height: '110px' }} alt="" />
-              <h2 style={{ fontSize: '24px', fontWeight: '1000', fontStyle: 'italic', marginTop: '15px', textTransform: 'uppercase' }}>{activeTeamData?.n}</h2>
-              <div style={{ color: teamSecColor, fontWeight: '1000', letterSpacing: '4px', fontSize: '10px' }}>COMMAND DOSSIER</div>
-            </div>
-            <div style={{ margin: '15px 0', textAlign: 'center' }}>
-               <TraitBadge text={activeTeamData.window} colorCode={getWindowColor(activeTeamData.window)} size="xl" />
-               <div style={{ background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.08)', padding: '18px', borderRadius: '12px', marginTop: '15px' }}>
-                   <div style={{ fontSize: '13px', color: s.textMain, lineHeight: 1.5, fontWeight: '600' }}>{activeTeamData.outlook}</div>
-               </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  {activeTeamData?.needs && Object.entries(activeTeamData.needs).sort((a,b) => b[1]-a[1]).slice(0, 6).map(([pos, val]) => (
-                        <div key={pos} style={{ fontSize: '22px', fontWeight: '1000', color: getNeedColor(val) }}>{pos}<span style={{ fontSize: '11px', opacity: 0.4, color: '#fff' }}> {val}</span></div>
-                  ))}
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '10px' }}>
-                {Array.isArray(activeTeamData?.likes) && activeTeamData.likes.slice(0,8).map((trait, i) => (
-                    <TraitBadge key={i} text={trait} colorCode={getAffinityColor(trait)} size="sm" />
-                ))}
-            </div>
-          </aside>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
