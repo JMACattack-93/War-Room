@@ -18,7 +18,7 @@ const s = {
 
 const normalize = (n) => n ? n.toLowerCase().replace(/\sjr\.?$/g,"").replace(/[^a-z0-9]/g,"").trim() : "";
 
-/* --- V79 TACTICAL OVERLAY --- */
+/* --- V84 TACTICAL OVERLAY --- */
 const TraitPortalMobile = ({ text, active, color }) => {
   if (!active) return null;
   const traitData = TRAIT_REGISTRY?.[text] || { description: "Tactical data pending..." };
@@ -35,7 +35,7 @@ const TraitPortalMobile = ({ text, active, color }) => {
   );
 };
 
-/* --- VISUAL ENGINES --- */
+/* --- V84 ANIMATION ENGINE --- */
 const CathodeSpline = () => (
   <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: -18, overflow: 'visible', pointerEvents: 'none', zIndex: 1 }}>
     <filter id="sig-glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -44,12 +44,25 @@ const CathodeSpline = () => (
   </svg>
 );
 
+const GrindingSparkStorm = () => (
+  <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2 }}>
+    {[...Array(6)].map((_, i) => (
+      <div key={i} className={`grind-node gn-${i}`}>
+        <div style={{ width: '1.5px', height: '1.5px', background: '#fff', borderRadius: '50%' }} />
+        <div className="vent-spark vs-1" /><div className="vent-spark vs-2" />
+      </div>
+    ))}
+  </div>
+);
+
 const TraitGem = ({ text, category = 'silver', size = 'md', isDossier = false }) => {
   const [active, setActive] = useState(false);
   if (!text) return null;
-  const cat = (TRAIT_REGISTRY?.[text]?.category || category).toLowerCase();
+  const reg = TRAIT_REGISTRY?.[text];
+  const cat = (reg?.category || category).toLowerCase();
+  
   const themes = {
-    gold: { rim: 'linear-gradient(180deg, #fff, #fbbf24 45%, #78350f)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(251,191,36,0.1) 50%, rgba(120,53,15,1) 100%)', glow: '#fbbf24' },
+    gold: { rim: 'linear-gradient(180deg, #fff, #fbbf24 45%, #78350f)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(251,191,36,0.15) 50%, rgba(120,53,15,1) 100%)', glow: '#fbbf24' },
     ruby: { rim: 'linear-gradient(180deg, #ffbaba, #ef4444 45%, #450a0a)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(239,68,68,0.1) 50%, rgba(69,10,10,1) 100%)', glow: '#ef4444' },
     sapphire: { rim: 'linear-gradient(180deg, #bae6fd, #3b82f6 45%, #082f49)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(59,130,246,0.1) 50%, rgba(8,47,73,1) 100%)', glow: '#3b82f6' },
     emerald: { rim: 'linear-gradient(180deg, #d1fae5, #10b981 45%, #064e3b)', gem: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(16,185,129,0.1) 50%, rgba(6,78,59,1) 100%)', glow: '#10b981' },
@@ -60,9 +73,26 @@ const TraitGem = ({ text, category = 'silver', size = 'md', isDossier = false })
     <div onTouchStart={() => setActive(true)} onTouchEnd={() => setActive(false)}
       style={{ display: 'inline-flex', padding: '4px', background: '#000', borderRadius: '12px', margin: '4px', position: 'relative' }}>
       <TraitPortalMobile text={text} active={active} color={themes.glow} />
-      <div style={{ padding: '2px', background: themes.rim, borderRadius: '6px', position: 'relative', overflow: isDossier && cat === 'gold' ? 'visible' : 'hidden' }}>
-        {cat === 'gold' && <CathodeSpline />}
-        <div style={{ background: themes.gem, color: cat === 'gold' ? '#000' : '#fff', padding: size === 'xl' ? '12px 24px' : '6px 14px', borderRadius: '4px', fontSize: size === 'xl' ? '13px' : '10px', fontWeight: '1000', textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.4)', position: 'relative', zIndex: 10 }}>{text}</div>
+      <div style={{ 
+          padding: '2px', background: themes.rim, borderRadius: '6px', position: 'relative', 
+          overflow: isDossier && cat === 'gold' ? 'visible' : 'hidden',
+          minWidth: size === 'xl' ? '120px' : '60px', height: size === 'xl' ? '44px' : '28px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+        {isDossier && cat === 'gold' && (
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', inset: -12, border: '10px solid #facc15', borderRadius: '18px', filter: 'blur(15px)', opacity: 0.4, animation: 'tensionBreathe 4s infinite ease-in-out' }} />
+            <GrindingSparkStorm /><CathodeSpline />
+          </div>
+        )}
+        <div style={{ 
+            background: themes.gem, color: cat === 'gold' ? '#000' : '#fff', 
+            padding: size === 'xl' ? '0 24px' : '0 14px', borderRadius: '4px', 
+            fontSize: size === 'xl' ? '13px' : '10px', fontWeight: '1000', 
+            textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.4)', 
+            position: 'relative', zIndex: 10, height: '80%', display: 'flex', 
+            alignItems: 'center', justifyContent: 'center', width: 'calc(100% - 4px)', whiteSpace: 'nowrap'
+          }}>{text}</div>
       </div>
     </div>
   );
@@ -78,10 +108,10 @@ const CATEGORY_MAP = {
 const RenderAllTraitsMobile = ({ player }) => {
   if (!player.traits) return null;
   const grouped = { S: [], P: [], M: [], T: [] };
-  Object.values(player.traits).flat().forEach(traitName => {
-    const registryData = TRAIT_REGISTRY?.[traitName];
-    const group = registryData?.group || 'T';
-    if (grouped[group]) grouped[group].push(traitName);
+  Object.values(player.traits).flat().forEach(t => {
+    const reg = TRAIT_REGISTRY?.[t];
+    const g = reg?.group || 'T';
+    if (grouped[g]) grouped[g].push(t);
   });
   return Object.entries(grouped).map(([key, list]) => {
     if (list.length === 0) return null;
@@ -116,46 +146,47 @@ export default function AppMobile() {
   useEffect(() => {
     const el = swipeRef.current;
     if (!el) return;
-    const handleScroll = () => {
-      const index = Math.round(el.scrollLeft / el.offsetWidth);
-      setActivePane(index);
-    };
+    const handleScroll = () => setActivePane(Math.round(el.scrollLeft / el.offsetWidth));
     el.addEventListener('scroll', handleScroll);
     return () => el.removeEventListener('scroll', handleScroll);
   }, [selectedId]);
 
   const boardData = useMemo(() => {
-    const normScout = {};
-    Object.keys(SCOUT_BOARD).forEach(k => normScout[normalize(k)] = SCOUT_BOARD[k]);
+    const norm = {};
+    Object.keys(SCOUT_BOARD).forEach(k => norm[normalize(k)] = SCOUT_BOARD[k]);
     return BIG_BOARD.map(p => {
-      const sd = normScout[normalize(p.name)] || { rank: 999, scout_value: 0 };
+      const sd = norm[normalize(p.name)] || { rank: 999, scout_value: 0 };
       return { ...p, scout_rank: sd.rank, scout_value: sd.scout_value };
     }).sort((a, b) => a.scout_rank - b.scout_rank);
   }, []);
 
-  const filteredBoard = boardData.filter(p => {
-    const isDrafted = Object.values(draftResults).some(dp => dp.name === p.name);
-    return !isDrafted && (p.name || "").toLowerCase().includes(search.toLowerCase()) && (filterPos === "ALL" || p.pos === filterPos);
-  });
-
+  const filteredBoard = boardData.filter(p => !Object.values(draftResults).some(dp => dp.name === p.name) && (p.name || "").toLowerCase().includes(search.toLowerCase()) && (filterPos === "ALL" || p.pos === filterPos));
   const selectedPlayer = selectedId !== null ? boardData.find(p => p.id === selectedId) : null;
 
   return (
     <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', background: s.surface, color: '#fff', fontFamily: 'Lexend, sans-serif', overflow: 'hidden' }}>
       <style>{`
         body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: #000; }
-        * { box-sizing: border-box; -ms-overflow-style: none; scrollbar-width: none; }
+        * { box-sizing: border-box; -ms-overflow-style: none; scrollbar-width: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; }
         *::-webkit-scrollbar { display: none; }
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;800&display=swap');
         @keyframes modalSlam { from { transform: translate(-50%, -10%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
         @keyframes selectGlow { 0%, 100% { border-color: var(--tc); box-shadow: 0 0 20px var(--tc-40); } 50% { border-color: #fff; box-shadow: 0 0 50px var(--tc-80); } }
         @keyframes initiateGlow { 0%, 100% { box-shadow: 0 0 40px ${s.accent}50; } 50% { box-shadow: 0 0 80px ${s.accent}; } }
+        @keyframes irradiationPulse { 0%, 100% { box-shadow: 0 0 40px var(--glow); filter: brightness(1); } 50% { box-shadow: 0 0 120px var(--glow); filter: brightness(1.2); } }
         @keyframes splineFlow { 0% { stroke-dashoffset: 400; opacity: 0.1; } 100% { stroke-dashoffset: 0; opacity: 0.1; } }
+        @keyframes sparkThrow { 0% { transform: translate(0,0) rotate(var(--rot)) scale(1.8); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0); opacity: 0; } }
+        @keyframes perimeterRace { 0% { top: 0%; left: 0%; } 25% { top: 0%; left: 100%; } 50% { top: 100%; left: 100%; } 75% { top: 100%; left: 0%; } 100% { top: 0%; left: 0%; } }
+        @keyframes tensionBreathe { 0%, 100% { opacity: 0.3; transform: scale(1); filter: blur(12px); } 50% { opacity: 0.5; transform: scale(1.03); filter: blur(18px); } }
         .fused-spline { fill: none; stroke-width: 2px; stroke-dasharray: 100 300; }
         .spline-main { stroke: ${s.pikachuYellow}; animation: splineFlow 4s infinite linear; }
         .spline-accent { stroke: ${s.electricBlue}; animation: splineFlow 2.5s infinite linear reverse; }
-        .swipe-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; height: 100%; -webkit-overflow-scrolling: touch; }
-        .swipe-pane { min-width: 100%; scroll-snap-align: start; height: 100%; overflow-y: auto; padding: 0 30px; }
+        .grind-node { position: absolute; width: 1px; height: 1px; animation: perimeterRace 5s infinite linear; }
+        .vent-spark { position: absolute; width: 1px; height: 10px; background: linear-gradient(to top, white, ${s.pikachuYellow}); animation: sparkThrow 0.25s infinite ease-out; }
+        .vs-1 { --tx: -40px; --ty: -25px; --rot: 35deg; animation-delay: 0.05s; } .vs-2 { --tx: 40px; --ty: 25px; --rot: -35deg; animation-delay: 0.15s; }
+        .gn-0 { animation-delay: 0s; } .gn-1 { animation-delay: -0.83s; } .gn-2 { animation-delay: -1.66s; } .gn-3 { animation-delay: -2.49s; } .gn-4 { animation-delay: -3.32s; } .gn-5 { animation-delay: -4.15s; }
+        .swipe-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; height: 100%; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+        .swipe-pane { min-width: 100%; scroll-snap-align: start; scroll-snap-stop: always; height: 100%; overflow-y: auto; padding: 0 30px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: 0.3s; }
         .dot-active { background: #fff; width: 30px; border-radius: 6px; box-shadow: 0 0 15px #fff; }
         .pos-tab { padding: 10px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; font-size: 11px; fontWeight: 900; color: #64748b; border: 1px solid transparent; flex-shrink: 0; }
@@ -180,7 +211,7 @@ export default function AppMobile() {
               </div>
             ))}
           </div>
-          <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', padding: '30px', background: 'linear-gradient(to top, #020406 90%, transparent)', zIndex: 100 }}><button onClick={() => setAppState('DRAFTING')} style={{ width: '100%', padding: '22px', background: s.accent, borderRadius: '25px', color: '#fff', fontSize: '24px', fontWeight: '1000', border: 'none', fontStyle: 'italic', animation: 'initiateGlow 3s infinite' }}>INITIATE</button></div>
+          <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', padding: '40px 30px', background: 'linear-gradient(to top, #020406 90%, transparent)', zIndex: 100 }}><button onClick={() => setAppState('DRAFTING')} style={{ width: '100%', padding: '22px', background: s.accent, borderRadius: '25px', color: '#fff', fontSize: '22px', fontWeight: '1000', border: 'none', fontStyle: 'italic', animation: 'initiateGlow 3s infinite' }}>INITIATE</button></div>
         </div>
       )}
 
@@ -236,7 +267,9 @@ export default function AppMobile() {
                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '30px', borderRadius: '28px', border: '1px solid rgba(255,255,255,0.08)' }}><div style={{ opacity: 0.4, fontSize: '13px', fontWeight: '1000' }}>NEURAL_FIT</div><div style={{ fontSize: '38px', fontWeight: '1000', color: s.terminal }}>94</div></div>
                 </div>
                 <h3 style={{ fontSize: '15px', color: s.accent, letterSpacing: '6px', marginBottom: '25px', fontWeight: '1000' }}>CORE_ABILITIES</h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap' }}>{selectedPlayer.traits?.gold?.map(t => <TraitGem key={t} text={t} category="gold" size="xl" isDossier={true} />)}</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                  {selectedPlayer.traits?.gold?.map(t => <TraitGem key={t} text={t} category="gold" size="xl" isDossier={true} />)}
+                </div>
               </div>
 
               <div className="swipe-pane">
@@ -246,13 +279,13 @@ export default function AppMobile() {
 
               <div className="swipe-pane">
                 <h3 style={{ fontSize: '14px', color: s.accent, letterSpacing: '6px', margin: '40px 0 25px', fontWeight: '1000' }}>SCOUT_SYNTHESIS</h3>
-                <p style={{ fontSize: '20px', lineHeight: 1.8, color: '#f1f5f9', fontWeight: '500', fontFamily: 'JetBrains Mono, monospace', background: 'rgba(255,255,255,0.03)', padding: '25px', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.1)' }}>{selectedPlayer.summary || "Tactical evaluation data pending..."}</p>
+                <p style={{ fontSize: '20px', lineHeight: 1.8, color: '#f1f5f9', fontWeight: '500', fontFamily: 'JetBrains Mono, monospace', background: 'rgba(255,255,255,0.03)', padding: '25px', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.1)' }}>{selectedPlayer.summary || "Tactical evaluation pending..."}</p>
               </div>
             </div>
 
             <div style={{ padding: '45px 35px', background: s.surfaceHigh, borderTop: '1px solid rgba(255,255,255,0.15)' }}>
                <button onClick={() => { setDraftResults(prev => ({ ...prev, [currentPick.pick]: selectedPlayer })); setCurrentPickIndex(v => v + 1); setSelectedId(null); }}
-                 style={{ width: '100%', padding: '35px', background: teamColor, borderRadius: '35px', color: teamSecColor, fontSize: '30px', fontWeight: '1000', border: 'none', fontStyle: 'italic', boxShadow: `0 0 120px ${teamColor}` }}>DRAFT</button>
+                 style={{ width: '100%', padding: '35px', background: teamColor, borderRadius: '35px', color: teamSecColor, fontSize: '30px', fontWeight: '1000', border: 'none', fontStyle: 'italic', animation: 'irradiationPulse 3s infinite ease-in-out', '--glow': teamColor }}>DRAFT</button>
             </div>
           </div>
         </div>

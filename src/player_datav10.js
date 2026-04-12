@@ -232,7 +232,7 @@ export const BIG_BOARD = [
     "name": "Fernando Mendoza",
     "school": "Indiana",
     "pos": "QB",
-    "summary": "A prototypical pocket passer built to attack all three levels with professional-grade arm strength. Measuring 6'04\" and 236 lbs, he pairs NFL-standard size with a gritty playstyle that allows him to stand tall under duress. Technically, He operates well out of shotgun and leans heavily on the RPO game Overall, he projects as a reliable developmental piece with the floor to be a long-term contributor in a specialized system.",
+    "summary": "A prototypical pocket passer built to attack all three levels with professional-grade arm strength. Measuring 6'04\" and 236 lbs, he pairs NFL-standard size with a gritty playstyle and above average arm talent that allows him to thrve. Technically, He operates well out of both shotgun and pro style sets. IU leaned heavily on the RPO & play action game Overall, he projects as a high end QB prospect with the floor to be a long-term contributor.",
     "traits": {
       "silver": [
         "Pro-Style",
