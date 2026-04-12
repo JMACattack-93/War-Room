@@ -481,8 +481,8 @@ export const GM_DATA = {
   },
   "NYJ": {
     "n": "New York Jets",
-    "outlook": "Win-now window; hunting veteran-ready trench erasers and press corners.",
-    "window": "CONTENDER",
+    "outlook": "Total Defensive reset under Glenn. Hutning high updside difference makers on both sides of the ball. Values physical tools and defensive smarts.",
+    "window": "Rebuilding",
     "needs": {
       "OT": 85,
       "QB": 95,
@@ -781,8 +781,8 @@ export const GM_DATA = {
   },
   "LV": {
     "n": "Las Vegas Raiders",
-    "outlook": "Telesco's 'Star' blueprint; hunting elite weapons and nasty trench finishers.",
-    "window": "CHASING",
+    "outlook": "Telesco's 'Star' blueprint; hunting elite weapons and nasty trench finishers in the new Kubiak system.",
+    "window": "Rebuilding",
     "needs": {
       "OT": 88,
       "QB": 99,
